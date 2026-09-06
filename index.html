@@ -1,0 +1,1609 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WeatherGuard AI — Invertis University</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            :root {
+                --sky-deep: #0a1830;
+                --sky-mid: #1c3a63;
+                --sky-line: #2c568f;
+                --storm: #ff8a3d;
+                --storm-deep: #e3661a;
+                --rain: #3ea6ff;
+                --gold: #f2c14e;
+                --paper: #f6f4ef;
+                --paper-card: #ffffff;
+                --ink: #0a1830;
+                --ink-soft: #5b6b85;
+                --hairline: #e2ded4;
+                --radius-lg: 22px;
+                --radius-md: 16px;
+                --radius-sm: 10px;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                height: 100%;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                background: var(--paper);
+                color: var(--ink);
+                line-height: 1.5;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: hidden;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .page-main {
+                flex: 1 0 auto;
+            }
+
+            .display {
+                font-family: "Fraunces", serif;
+            }
+            .mono {
+                font-family: "IBM Plex Mono", monospace;
+            }
+            a {
+                color: inherit;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    animation-duration: 0.001ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.001ms !important;
+                }
+            }
+
+            /* ============ Header ============ */
+            header {
+                background: var(--sky-deep);
+                color: #fff;
+                padding: 18px clamp(20px, 4vw, 48px);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: sticky;
+                top: 0;
+                z-index: 30;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(
+                    135deg,
+                    var(--rain),
+                    var(--sky-mid)
+                );
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 19px;
+                flex-shrink: 0;
+                animation: float 4s ease-in-out infinite;
+            }
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-4px);
+                }
+            }
+
+            .brand h2 {
+                font-family: "Fraunces", serif;
+                font-weight: 600;
+                font-size: 20px;
+                letter-spacing: 0.2px;
+            }
+
+            .brand span {
+                display: block;
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.55);
+                font-family: "IBM Plex Mono", monospace;
+                margin-top: 2px;
+            }
+
+            .header-right {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            #themeBtn {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: rgba(255, 255, 255, 0.06);
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition:
+                    background 0.15s ease,
+                    transform 0.2s ease;
+            }
+            #themeBtn:hover {
+                background: rgba(255, 255, 255, 0.14);
+                transform: rotate(20deg);
+            }
+            #themeBtn:focus-visible,
+            a:focus-visible,
+            .card:focus-visible,
+            .nav-item:focus-visible {
+                outline: 2px solid var(--rain);
+                outline-offset: 2px;
+            }
+
+            /* ============ Nav tabs ============ */
+            #navbar {
+                position: sticky;
+                top: 76px;
+                z-index: 20;
+                background: var(--paper-card);
+                border-bottom: 1px solid var(--hairline);
+                display: flex;
+                gap: 4px;
+                padding: 10px clamp(20px, 4vw, 48px);
+                overflow-x: auto;
+                box-shadow: 0 4px 14px rgba(10, 24, 48, 0.04);
+            }
+            #navbar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-item {
+                flex-shrink: 0;
+                padding: 9px 16px;
+                font-size: 13.5px;
+                font-weight: 600;
+                color: var(--ink-soft);
+                border-radius: 20px;
+                cursor: pointer;
+                white-space: nowrap;
+                position: relative;
+                transition:
+                    color 0.2s ease,
+                    background 0.25s ease,
+                    transform 0.15s ease;
+            }
+            .nav-item:hover {
+                color: var(--ink);
+                background: rgba(28, 58, 99, 0.06);
+            }
+            .nav-item:active {
+                transform: scale(0.96);
+            }
+            .nav-item.active-tab {
+                color: #fff;
+                background: linear-gradient(
+                    120deg,
+                    var(--sky-mid),
+                    var(--rain)
+                );
+                box-shadow: 0 4px 12px rgba(28, 58, 99, 0.25);
+            }
+
+            /* ============ Layout ============ */
+            .container {
+                width: 92%;
+                max-width: 1040px;
+                margin: 0 auto;
+                padding: 36px 0 60px;
+            }
+
+            .section {
+                display: none;
+            }
+            .section.active-section {
+                display: block;
+                animation: sectionFade 0.4s ease both;
+            }
+            @keyframes sectionFade {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .reveal-up {
+                opacity: 0;
+                transform: translateY(38px);
+                animation: revealUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                animation-delay: calc(var(--i, 0) * 70ms);
+            }
+            @keyframes revealUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ============ Hero ============ */
+            .hero {
+                background: linear-gradient(
+                    150deg,
+                    var(--sky-deep) 0%,
+                    var(--sky-mid) 62%,
+                    var(--sky-line) 100%
+                );
+                color: #fff;
+                border-radius: var(--radius-lg);
+                padding: clamp(28px, 4vw, 44px);
+                display: grid;
+                grid-template-columns: 1.2fr 1fr;
+                gap: 20px;
+                position: relative;
+                overflow: hidden;
+            }
+            .hero::after {
+                content: "";
+                position: absolute;
+                right: -60px;
+                top: -60px;
+                width: 260px;
+                height: 260px;
+                background: radial-gradient(
+                    circle,
+                    rgba(62, 166, 255, 0.35),
+                    transparent 70%
+                );
+                pointer-events: none;
+                animation: pulseGlow 5s ease-in-out infinite;
+            }
+            @keyframes pulseGlow {
+                0%,
+                100% {
+                    opacity: 0.6;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.15);
+                }
+            }
+
+            .hero-loc {
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 13px;
+                letter-spacing: 0.3px;
+                color: rgba(255, 255, 255, 0.65);
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .hero-temp {
+                font-family: "Fraunces", serif;
+                font-weight: 600;
+                font-size: clamp(64px, 9vw, 96px);
+                line-height: 0.95;
+                letter-spacing: -2px;
+            }
+
+            .hero-desc {
+                margin-top: 10px;
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.8);
+            }
+
+            .hero-right {
+                position: relative;
+                border-left: 1px solid rgba(255, 255, 255, 0.15);
+                padding-left: 24px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+            }
+            .hero-right .rain-eta {
+                font-family: "Fraunces", serif;
+                font-size: 26px;
+                font-weight: 600;
+            }
+            .hero-right .rain-sub {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.65);
+            }
+
+            .humidity-bar {
+                margin-top: 8px;
+                height: 6px;
+                border-radius: 4px;
+                background: rgba(255, 255, 255, 0.15);
+                overflow: hidden;
+            }
+            .humidity-bar i {
+                display: block;
+                height: 100%;
+                width: 0%;
+                background: var(--rain);
+                border-radius: 4px;
+                animation: fillBar 1.2s ease 0.3s forwards;
+            }
+            @keyframes fillBar {
+                to {
+                    width: 84%;
+                }
+            }
+
+            /* ============ Alert ============ */
+            .alert {
+                margin-top: 18px;
+                background: var(--paper-card);
+                border: 1px solid var(--hairline);
+                border-left: 5px solid var(--storm);
+                border-radius: var(--radius-md);
+                padding: 20px 22px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .alert-icon {
+                width: 46px;
+                height: 46px;
+                flex-shrink: 0;
+                border-radius: 50%;
+                background: rgba(255, 138, 61, 0.12);
+                color: var(--storm-deep);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                animation: ring 2.2s ease-in-out infinite;
+            }
+            @keyframes ring {
+                0%,
+                100% {
+                    transform: rotate(0);
+                }
+                10% {
+                    transform: rotate(-12deg);
+                }
+                20% {
+                    transform: rotate(10deg);
+                }
+                30% {
+                    transform: rotate(-8deg);
+                }
+                40% {
+                    transform: rotate(4deg);
+                }
+                50% {
+                    transform: rotate(0);
+                }
+            }
+            .alert-body h2 {
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--storm-deep);
+                margin-bottom: 3px;
+            }
+            .alert-body p {
+                font-size: 14px;
+                color: var(--ink-soft);
+            }
+            .risk-tag {
+                margin-left: auto;
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 12px;
+                font-weight: 600;
+                background: var(--storm-deep);
+                color: #fff;
+                padding: 6px 12px;
+                border-radius: 20px;
+                white-space: nowrap;
+                animation: tagPulse 1.8s ease-in-out infinite;
+            }
+            @keyframes tagPulse {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0 rgba(227, 102, 26, 0.45);
+                }
+                50% {
+                    box-shadow: 0 0 0 7px rgba(227, 102, 26, 0);
+                }
+            }
+
+            /* ============ Hourly timeline ============ */
+            .section-label {
+                margin: 34px 0 14px;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--ink-soft);
+            }
+
+            .hourly-weather {
+                display: flex;
+                gap: 10px;
+                overflow-x: auto;
+                padding: 6px 2px 14px;
+                scroll-behavior: smooth;
+            }
+            .hourly-weather::-webkit-scrollbar {
+                height: 5px;
+            }
+            .hourly-weather::-webkit-scrollbar-thumb {
+                background: var(--sky-line);
+                border-radius: 10px;
+            }
+
+            .hour {
+                min-width: 76px;
+                flex-shrink: 0;
+                background: var(--paper-card);
+                border: 1px solid var(--hairline);
+                border-radius: var(--radius-sm);
+                text-align: center;
+                padding: 14px 8px;
+                transition:
+                    border-color 0.15s ease,
+                    transform 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+            .hour:hover {
+                border-color: var(--sky-line);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 18px rgba(10, 24, 48, 0.1);
+            }
+            .hour p {
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 11px;
+                color: var(--ink-soft);
+                margin-bottom: 10px;
+            }
+            .hour .ic {
+                font-size: 24px;
+                display: block;
+                margin-bottom: 8px;
+            }
+            .hour h3 {
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .hour.rainy {
+                background: rgba(62, 166, 255, 0.06);
+                border-color: rgba(62, 166, 255, 0.3);
+            }
+
+            /* ============ Metric / generic cards ============ */
+            .cards {
+                margin-top: 6px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 14px;
+            }
+            .card {
+                background: var(--paper-card);
+                border: 1px solid var(--hairline);
+                border-radius: var(--radius-md);
+                padding: 20px;
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 24px rgba(10, 24, 48, 0.1);
+            }
+            .card .ic {
+                font-size: 20px;
+                margin-bottom: 10px;
+                display: block;
+            }
+            .card .label {
+                font-size: 12px;
+                color: var(--ink-soft);
+                margin-bottom: 6px;
+            }
+            .card .value {
+                font-family: "Fraunces", serif;
+                font-size: 26px;
+                font-weight: 600;
+            }
+
+            /* ============ Map ============ */
+            .map {
+                margin-top: 34px;
+            }
+            .map-frame {
+                margin-top: 14px;
+                border-radius: var(--radius-md);
+                overflow: hidden;
+                border: 1px solid var(--hairline);
+            }
+            .map-frame iframe {
+                display: block;
+                width: 100%;
+                height: 340px;
+                border: 0;
+            }
+
+            /* ============ Forecast day cards ============ */
+            .forecast-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 14px;
+            }
+            .day-card {
+                background: var(--paper-card);
+                border: 1px solid var(--hairline);
+                border-radius: var(--radius-md);
+                padding: 18px 14px;
+                text-align: center;
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+            .day-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 24px rgba(10, 24, 48, 0.1);
+            }
+            .day-card .dname {
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 12px;
+                color: var(--ink-soft);
+                margin-bottom: 8px;
+            }
+            .day-card .ic {
+                font-size: 30px;
+                margin-bottom: 8px;
+                display: block;
+            }
+            .day-card .hi {
+                font-family: "Fraunces", serif;
+                font-weight: 600;
+                font-size: 20px;
+            }
+            .day-card .lo {
+                font-size: 13px;
+                color: var(--ink-soft);
+                margin-left: 6px;
+            }
+            .day-card .cond {
+                font-size: 11.5px;
+                color: var(--ink-soft);
+                margin-top: 6px;
+            }
+
+            /* ============ History / custom date section ============ */
+            .history-form {
+                background: var(--paper-card);
+                border: 1px solid var(--hairline);
+                border-radius: var(--radius-md);
+                padding: 24px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 14px;
+                align-items: flex-end;
+            }
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                flex: 1;
+                min-width: 160px;
+            }
+            .field label {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--ink-soft);
+            }
+            .field input {
+                padding: 11px 12px;
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--hairline);
+                font-family: "Inter", sans-serif;
+                font-size: 14px;
+                background: var(--paper);
+                color: var(--ink);
+            }
+            .field input:focus {
+                outline: 2px solid var(--rain);
+                outline-offset: 1px;
+            }
+            .btn-primary {
+                padding: 11px 22px;
+                border: none;
+                border-radius: var(--radius-sm);
+                background: linear-gradient(
+                    120deg,
+                    var(--sky-mid),
+                    var(--rain)
+                );
+                color: #fff;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                transition:
+                    transform 0.15s ease,
+                    box-shadow 0.15s ease;
+            }
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 18px rgba(28, 58, 99, 0.3);
+            }
+            .btn-primary:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            .history-result {
+                margin-top: 22px;
+            }
+            .history-empty {
+                margin-top: 22px;
+                color: var(--ink-soft);
+                font-size: 14px;
+                font-style: italic;
+            }
+
+            /* ============ Astronomy ============ */
+            .astro-hero {
+                background: linear-gradient(
+                    150deg,
+                    #0a1830,
+                    #22284d 60%,
+                    #3a3466
+                );
+                border-radius: var(--radius-lg);
+                padding: clamp(28px, 4vw, 40px);
+                color: #fff;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+            .astro-hero::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image:
+                    radial-gradient(
+                        2px 2px at 20% 30%,
+                        rgba(255, 255, 255, 0.6),
+                        transparent
+                    ),
+                    radial-gradient(
+                        2px 2px at 70% 20%,
+                        rgba(255, 255, 255, 0.5),
+                        transparent
+                    ),
+                    radial-gradient(
+                        1.5px 1.5px at 40% 70%,
+                        rgba(255, 255, 255, 0.4),
+                        transparent
+                    ),
+                    radial-gradient(
+                        2px 2px at 85% 60%,
+                        rgba(255, 255, 255, 0.5),
+                        transparent
+                    ),
+                    radial-gradient(
+                        1.5px 1.5px at 55% 45%,
+                        rgba(255, 255, 255, 0.35),
+                        transparent
+                    );
+                animation: twinkle 3s ease-in-out infinite alternate;
+            }
+            @keyframes twinkle {
+                from {
+                    opacity: 0.5;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            .moon-emoji {
+                font-size: 56px;
+                position: relative;
+                z-index: 1;
+                display: inline-block;
+                animation: float 5s ease-in-out infinite;
+            }
+            .astro-hero h3 {
+                font-family: "Fraunces", serif;
+                font-size: 24px;
+                margin-top: 10px;
+                position: relative;
+                z-index: 1;
+            }
+            .astro-hero p {
+                color: rgba(255, 255, 255, 0.7);
+                margin-top: 6px;
+                position: relative;
+                z-index: 1;
+                font-size: 14px;
+            }
+
+            /* ============ Seamless Floating Wave Footer ============ */
+            footer {
+                position: relative;
+                margin-top: 70px;
+                background: linear-gradient(
+                    180deg,
+                    var(--sky-deep) 0%,
+                    #061022 100%
+                );
+                color: rgba(255, 255, 255, 0.8);
+                text-align: center;
+                padding: 36px 20px 28px;
+            }
+            body.dark footer {
+                background: linear-gradient(180deg, #091322 0%, #03070f 100%);
+            }
+
+            .water-waves {
+                position: absolute;
+                bottom: calc(100% - 1px);
+                left: 0;
+                width: 100%;
+                height: 48px;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .wave {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 200%;
+                height: 100%;
+            }
+            .wave path {
+                fill-opacity: 1;
+            }
+
+            .wave-back {
+                animation: waveFlow 16s linear infinite;
+            }
+            .wave-back path {
+                fill: rgba(62, 166, 255, 0.25);
+            }
+
+            .wave-mid {
+                animation: waveFlow 11s linear infinite reverse;
+            }
+            .wave-mid path {
+                fill: rgba(62, 166, 255, 0.5);
+            }
+
+            .wave-front {
+                animation: waveFlow 8s linear infinite;
+            }
+            .wave-front path {
+                fill: var(--sky-deep);
+            }
+            body.dark .wave-front path {
+                fill: #091322;
+            }
+
+            @keyframes waveFlow {
+                from {
+                    transform: translateX(0);
+                }
+                to {
+                    transform: translateX(-50%);
+                }
+            }
+
+            .footer-inner {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+
+            .footer-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: "Fraunces", serif;
+                font-weight: 600;
+                font-size: 18px;
+                color: #fff;
+                letter-spacing: 0.2px;
+            }
+            .footer-mark {
+                font-size: 22px;
+                animation: float 4s ease-in-out infinite;
+            }
+
+            .footer-divider {
+                width: 50px;
+                height: 2px;
+                border-radius: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--rain),
+                    var(--gold),
+                    transparent
+                );
+            }
+
+            .footer-credit {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .credit-label {
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.65);
+            }
+
+            .footer-credit .names {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .name-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 7px 16px;
+                border-radius: 30px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+                transition: all 0.2s ease;
+            }
+            .name-chip:hover {
+                transform: translateY(-2px);
+                background: rgba(255, 255, 255, 0.18);
+                border-color: var(--rain);
+                box-shadow: 0 6px 20px rgba(62, 166, 255, 0.3);
+            }
+
+            .avatar-badge {
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background: linear-gradient(
+                    135deg,
+                    var(--rain),
+                    var(--sky-mid)
+                );
+                color: #ffffff;
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 10.5px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            }
+
+            .name-text {
+                font-family: "Fraunces", serif;
+                font-size: 15px;
+                font-weight: 600;
+                letter-spacing: 0.3px;
+                color: #ffffff;
+                white-space: nowrap;
+            }
+
+            .footer-credit .amp {
+                color: var(--gold);
+                font-family: "Fraunces", serif;
+                font-size: 18px;
+                font-weight: 600;
+                padding: 0 2px;
+            }
+
+            .footer-sub {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.45);
+                font-family: "IBM Plex Mono", monospace;
+                letter-spacing: 0.3px;
+                margin-top: 2px;
+            }
+
+            /* ============ Dark mode ============ */
+            body.dark {
+                background: #0c1424;
+                color: #eef1f8;
+            }
+            body.dark #navbar {
+                background: #101a2e;
+                border-color: #25324a;
+            }
+            body.dark .nav-item {
+                color: #8a96ae;
+            }
+            body.dark .nav-item:hover {
+                background: rgba(62, 166, 255, 0.1);
+                color: #eef1f8;
+            }
+            body.dark .card,
+            body.dark .alert,
+            body.dark .hour,
+            body.dark .day-card,
+            body.dark .history-form {
+                background: #141d30;
+                border-color: #25324a;
+                color: #eef1f8;
+            }
+            body.dark .field input {
+                background: #0c1424;
+                border-color: #25324a;
+                color: #eef1f8;
+            }
+            body.dark .card .label,
+            body.dark .hour p,
+            body.dark .alert-body p,
+            body.dark .day-card .lo,
+            body.dark .day-card .cond,
+            body.dark .field label {
+                color: #8a96ae;
+            }
+            body.dark .section-label {
+                color: #8a96ae;
+            }
+            body.dark .map-frame {
+                border-color: #25324a;
+            }
+            body.dark .humidity-bar {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            body.dark .history-empty {
+                color: #8a96ae;
+            }
+
+            /* ============ Responsive ============ */
+            @media (max-width: 680px) {
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .hero-right {
+                    border-left: none;
+                    border-top: 1px solid rgba(255, 255, 255, 0.15);
+                    padding-left: 0;
+                    padding-top: 18px;
+                }
+                #navbar {
+                    top: 70px;
+                }
+                footer {
+                    padding-top: 30px;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="page-main">
+            <header>
+                <div class="brand">
+                    <div class="brand-mark"><img src="logo.jpg"style="
+width:55px;
+height:55px;
+border-radius:50%;
+object-fit:cover;
+background:white;
+padding:3px;
+">
+</div>
+                    <div>
+                        <h2>WeatherGuard AI</h2>
+                        <span>REALTIME · INVERTIS UNIVERSITY</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button
+                        id="themeBtn"
+                        onclick="toggleTheme()"
+                        aria-label="Toggle dark mode"
+                    >
+                        🌙
+                    </button>
+                </div>
+            </header>
+
+            <nav id="navbar">
+                <div
+                    class="nav-item active-tab"
+                    data-target="home-section"
+                    data-type="home"
+                >
+                    Home
+                </div>
+                <div
+                    class="nav-item"
+                    data-target="current-section"
+                    data-type="current"
+                >
+                    Current Weather
+                </div>
+                <div
+                    class="nav-item"
+                    data-target="forecast-section"
+                    data-type="forecast"
+                >
+                    Weather Forecast
+                </div>
+                <div
+                    class="nav-item"
+                    data-target="history-section"
+                    data-type="history"
+                >
+                    Custom Last Date Weather
+                </div>
+                <div
+                    class="nav-item"
+                    data-target="astronomy-section"
+                    data-type="astronomy"
+                >
+                    Astronomy Insights
+                </div>
+            </nav>
+
+            <div class="container">
+                <!-- ============ HOME ============ -->
+                <section id="home-section" class="section active-section">
+                    <div class="hero reveal-up" style="--i: 0">
+                        <div>
+                            <div class="hero-loc">
+                                📍 Invertis University, Uttar Pradesh
+                            </div>
+                            <div class="hero-temp">31°</div>
+                            <p class="hero-desc">
+                                Warm and humid, with rain building through the
+                                afternoon.
+                            </p>
+                        </div>
+                        <div class="hero-right">
+                            <div class="rain-eta">🌧️ Rain in 75 min</div>
+                            <div class="rain-sub">
+                                Humidity holding at 84% — expect a sharp drop in
+                                temperature once it breaks.
+                            </div>
+                            <div class="humidity-bar"><i></i></div>
+                        </div>
+                    </div>
+
+                    <div class="alert reveal-up" style="--i: 1">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-body">
+                            <h2>Heavy rain expected within 75 minutes</h2>
+                            <p>
+                                Move outdoor equipment indoors and avoid open
+                                fields on campus.
+                            </p>
+                        </div>
+                        <div class="risk-tag">HIGH RISK</div>
+                    </div>
+
+                    <div class="section-label reveal-up" style="--i: 2">
+                        Next 24 hours
+                    </div>
+                    <div class="hourly-weather reveal-up" style="--i: 2">
+                        <div class="hour">
+                            <p>12 AM</p>
+                            <span class="ic">☁️</span>
+                            <h3>27°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>1 AM</p>
+                            <span class="ic">☁️</span>
+                            <h3>27°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>2 AM</p>
+                            <span class="ic">☁️</span>
+                            <h3>27°</h3>
+                        </div>
+                        <div class="hour rainy">
+                            <p>3 AM</p>
+                            <span class="ic">🌧️</span>
+                            <h3>26°</h3>
+                        </div>
+                        <div class="hour rainy">
+                            <p>4 AM</p>
+                            <span class="ic">🌧️</span>
+                            <h3>26°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>5 AM</p>
+                            <span class="ic">🌅</span>
+                            <h3>27°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>6 AM</p>
+                            <span class="ic">☀️</span>
+                            <h3>28°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>7 AM</p>
+                            <span class="ic">☀️</span>
+                            <h3>30°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>8 AM</p>
+                            <span class="ic">☀️</span>
+                            <h3>31°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>9 AM</p>
+                            <span class="ic">🌤️</span>
+                            <h3>32°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>10 AM</p>
+                            <span class="ic">🌤️</span>
+                            <h3>33°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>11 AM</p>
+                            <span class="ic">☀️</span>
+                            <h3>34°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>12 PM</p>
+                            <span class="ic">☀️</span>
+                            <h3>35°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>1 PM</p>
+                            <span class="ic">☀️</span>
+                            <h3>36°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>2 PM</p>
+                            <span class="ic">🌤️</span>
+                            <h3>36°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>3 PM</p>
+                            <span class="ic">⛅</span>
+                            <h3>35°</h3>
+                        </div>
+                        <div class="hour rainy">
+                            <p>4 PM</p>
+                            <span class="ic">🌦️</span>
+                            <h3>34°</h3>
+                        </div>
+                        <div class="hour rainy">
+                            <p>5 PM</p>
+                            <span class="ic">🌧️</span>
+                            <h3>33°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>6 PM</p>
+                            <span class="ic">🌇</span>
+                            <h3>31°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>7 PM</p>
+                            <span class="ic">🌙</span>
+                            <h3>30°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>8 PM</p>
+                            <span class="ic">🌙</span>
+                            <h3>29°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>9 PM</p>
+                            <span class="ic">☁️</span>
+                            <h3>29°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>10 PM</p>
+                            <span class="ic">☁️</span>
+                            <h3>28°</h3>
+                        </div>
+                        <div class="hour">
+                            <p>11 PM</p>
+                            <span class="ic">☁️</span>
+                            <h3>27°</h3>
+                        </div>
+                    </div>
+
+                    <div class="section-label reveal-up" style="--i: 3">
+                        Live weather map
+                    </div>
+                    <div class="map-frame reveal-up" style="--i: 3">
+                        <iframe
+                            src="https://www.google.com/maps?q=invertis+university,+Uttar+Pradesh&output=embed"
+                            loading="lazy"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                </section>
+
+                <!-- ============ CURRENT WEATHER ============ -->
+                <section id="current-section" class="section">
+                    <div class="section-label reveal-up" style="--i: 0">
+                        Current conditions
+                    </div>
+                    <div class="cards">
+                        <div class="card reveal-up" style="--i: 1">
+                            <span class="ic">🌡️</span>
+                            <div class="label">Temperature</div>
+                            <div class="value">31°C</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 2">
+                            <span class="ic">🤗</span>
+                            <div class="label">Feels like</div>
+                            <div class="value">36°C</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 3">
+                            <span class="ic">💧</span>
+                            <div class="label">Humidity</div>
+                            <div class="value">84%</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 4">
+                            <span class="ic">🌬️</span>
+                            <div class="label">Wind</div>
+                            <div class="value">18 km/h</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 5">
+                            <span class="ic">🧭</span>
+                            <div class="label">Pressure</div>
+                            <div class="value">1004 hPa</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 6">
+                            <span class="ic">👁️</span>
+                            <div class="label">Visibility</div>
+                            <div class="value">6 km</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 7">
+                            <span class="ic">☀️</span>
+                            <div class="label">UV Index</div>
+                            <div class="value">6</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 8">
+                            <span class="ic">☁️</span>
+                            <div class="label">Cloud cover</div>
+                            <div class="value">72%</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ FORECAST ============ -->
+                <section id="forecast-section" class="section">
+                    <div class="section-label reveal-up" style="--i: 0">
+                        7-day forecast
+                    </div>
+                    <div class="forecast-grid">
+                        <div class="day-card reveal-up" style="--i: 1">
+                            <div class="dname">TODAY</div>
+                            <span class="ic">🌦️</span>
+                            <div>
+                                <span class="hi">35°</span
+                                ><span class="lo">26°</span>
+                            </div>
+                            <div class="cond">Scattered rain</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 2">
+                            <div class="dname">MON</div>
+                            <span class="ic">⛈️</span>
+                            <div>
+                                <span class="hi">33°</span
+                                ><span class="lo">25°</span>
+                            </div>
+                            <div class="cond">Thunderstorms</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 3">
+                            <div class="dname">TUE</div>
+                            <span class="ic">🌧️</span>
+                            <div>
+                                <span class="hi">31°</span
+                                ><span class="lo">24°</span>
+                            </div>
+                            <div class="cond">Heavy rain</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 4">
+                            <div class="dname">WED</div>
+                            <span class="ic">⛅</span>
+                            <div>
+                                <span class="hi">32°</span
+                                ><span class="lo">24°</span>
+                            </div>
+                            <div class="cond">Partly cloudy</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 5">
+                            <div class="dname">THU</div>
+                            <span class="ic">☀️</span>
+                            <div>
+                                <span class="hi">36°</span
+                                ><span class="lo">25°</span>
+                            </div>
+                            <div class="cond">Clear skies</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 6">
+                            <div class="dname">FRI</div>
+                            <span class="ic">☀️</span>
+                            <div>
+                                <span class="hi">37°</span
+                                ><span class="lo">26°</span>
+                            </div>
+                            <div class="cond">Sunny, hot</div>
+                        </div>
+                        <div class="day-card reveal-up" style="--i: 7">
+                            <div class="dname">SAT</div>
+                            <span class="ic">🌤️</span>
+                            <div>
+                                <span class="hi">35°</span
+                                ><span class="lo">25°</span>
+                            </div>
+                            <div class="cond">Mild haze</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============ CUSTOM LAST DATE WEATHER ============ -->
+                <section id="history-section" class="section">
+                    <div class="section-label reveal-up" style="--i: 0">
+                        Look up a past date
+                    </div>
+                    <div class="history-form reveal-up" style="--i: 1">
+                        <div class="field">
+                            <label for="histDate">Date</label>
+                            <input type="date" id="histDate" />
+                        </div>
+                        <div class="field">
+                            <label for="histCity">Location</label>
+                            <input
+                                type="text"
+                                id="histCity"
+                                value="Invertis University"
+                                placeholder="Enter a location"
+                            />
+                        </div>
+                        <button class="btn-primary" onclick="fetchHistory()">
+                            Get weather
+                        </button>
+                    </div>
+                    <div id="historyOutput">
+                        <p class="history-empty">
+                            Pick a date above to see that day's recorded
+                            conditions.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ============ ASTRONOMY ============ -->
+                <section id="astronomy-section" class="section">
+                    <div class="astro-hero reveal-up" style="--i: 0">
+                        <span class="moon-emoji">🌔</span>
+                        <h3>Waxing Gibbous · 78% illuminated</h3>
+                        <p>Moonrise 2:12 PM · Moonset 1:04 AM</p>
+                    </div>
+                    <div class="section-label reveal-up" style="--i: 1">
+                        Sun &amp; day length
+                    </div>
+                    <div class="cards">
+                        <div class="card reveal-up" style="--i: 2">
+                            <span class="ic">🌅</span>
+                            <div class="label">Sunrise</div>
+                            <div class="value">5:48 AM</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 3">
+                            <span class="ic">🌇</span>
+                            <div class="label">Sunset</div>
+                            <div class="value">6:37 PM</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 4">
+                            <span class="ic">⏱️</span>
+                            <div class="label">Day length</div>
+                            <div class="value">12h 49m</div>
+                        </div>
+                        <div class="card reveal-up" style="--i: 5">
+                            <span class="ic">🌙</span>
+                            <div class="label">Moon phase</div>
+                            <div class="value">Gibbous</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer>
+            <div class="water-waves" aria-hidden="true">
+                <svg
+                    class="wave wave-back"
+                    viewBox="0 0 2400 60"
+                    preserveAspectRatio="none"
+                >
+                    <path
+                        d="M0,30 C150,10 450,10 600,30 C750,50 1050,50 1200,30 C1350,10 1650,10 1800,30 C1950,50 2250,50 2400,30 L2400,60 L0,60 Z"
+                    ></path>
+                </svg>
+                <svg
+                    class="wave wave-mid"
+                    viewBox="0 0 2400 60"
+                    preserveAspectRatio="none"
+                >
+                    <path
+                        d="M0,24 C150,44 450,44 600,24 C750,4 1050,4 1200,24 C1350,44 1650,44 1800,24 C1950,4 2250,4 2400,24 L2400,60 L0,60 Z"
+                    ></path>
+                </svg>
+                <svg
+                    class="wave wave-front"
+                    viewBox="0 0 2400 60"
+                    preserveAspectRatio="none"
+                >
+                    <path
+                        d="M0,36 C150,20 450,20 600,36 C750,52 1050,52 1200,36 C1350,20 1650,20 1800,36 C1950,52 2250,52 2400,36 L2400,60 L0,60 Z"
+                    ></path>
+                </svg>
+            </div>
+
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="footer-mark">🌦️</span>
+                    <span>WeatherGuard AI</span>
+                </div>
+
+                <div class="footer-divider"></div>
+
+                <div class="footer-credit">
+                    <span class="credit-label"
+                        >Designed &amp; Developed By</span
+                    >
+                    <div class="names">
+                        <div class="name-chip">
+                            <span class="avatar-badge">ST</span>
+                            <span class="name-text">Shivam Thakur</span>
+                        </div>
+                        <span class="amp">&amp;</span>
+                        <div class="name-chip">
+                            <span class="avatar-badge">YT</span>
+                            <span class="name-text">Yuvraj Thakur</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-sub">
+                    © 2026 WeatherGuard AI · Invertis University Hackathon
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            function toggleTheme() {
+                document.body.classList.toggle("dark");
+                const btn = document.getElementById("themeBtn");
+                btn.innerHTML = document.body.classList.contains("dark")
+                    ? "☀️"
+                    : "🌙";
+            }
+
+            function playReveal(section) {
+                const items = section.querySelectorAll(".reveal-up");
+                items.forEach((el) => {
+                    el.style.animation = "none";
+                    void el.offsetWidth;
+                    el.style.animation = "";
+                });
+            }
+
+            document.querySelectorAll(".nav-item").forEach((item) => {
+                item.addEventListener("click", () => {
+                    document
+                        .querySelectorAll(".nav-item")
+                        .forEach((n) => n.classList.remove("active-tab"));
+                    item.classList.add("active-tab");
+
+                    const targetId = item.getAttribute("data-target");
+                    document
+                        .querySelectorAll(".section")
+                        .forEach((sec) =>
+                            sec.classList.remove("active-section"),
+                        );
+                    const target = document.getElementById(targetId);
+                    target.classList.add("active-section");
+                    playReveal(target);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+            });
+
+            function fetchHistory() {
+                const dateVal = document.getElementById("histDate").value;
+                const city =
+                    document.getElementById("histCity").value ||
+                    "Invertis University";
+                const output = document.getElementById("historyOutput");
+
+                if (!dateVal) {
+                    output.innerHTML =
+                        '<p class="history-empty">Please choose a date first.</p>';
+                    return;
+                }
+
+                let seed = 0;
+                for (let i = 0; i < dateVal.length; i++) {
+                    seed = (seed * 31 + dateVal.charCodeAt(i)) % 1000;
+                }
+                const temp = 24 + (seed % 14);
+                const humidity = 40 + (seed % 50);
+                const wind = 6 + (seed % 20);
+                const conditions = [
+                    "Clear skies",
+                    "Partly cloudy",
+                    "Light rain",
+                    "Overcast",
+                    "Thunderstorms",
+                    "Hazy sunshine",
+                ];
+                const cond = conditions[seed % conditions.length];
+                const icons = ["☀️", "⛅", "🌦️", "☁️", "⛈️", "🌤️"];
+                const icon = icons[seed % icons.length];
+
+                const formatted = new Date(
+                    dateVal + "T00:00:00",
+                ).toLocaleDateString(undefined, {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                });
+
+                output.innerHTML = `
+    <div class="section-label reveal-up" style="--i:0">Results for ${formatted} · ${city}</div>
+    <div class="cards">
+      <div class="card reveal-up" style="--i:1"><span class="ic">${icon}</span><div class="label">Condition</div><div class="value">${cond}</div></div>
+      <div class="card reveal-up" style="--i:2"><span class="ic">🌡️</span><div class="label">Temperature</div><div class="value">${temp}°C</div></div>
+      <div class="card reveal-up" style="--i:3"><span class="ic">💧</span><div class="label">Humidity</div><div class="value">${humidity}%</div></div>
+      <div class="card reveal-up" style="--i:4"><span class="ic">🌬️</span><div class="label">Wind</div><div class="value">${wind} km/h</div></div>
+    </div>
+  `;
+                playReveal(output);
+            }
+        </script>
+    </body>
+</html>
