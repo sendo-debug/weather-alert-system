@@ -208,6 +208,52 @@ public class WeatherServer {
             );
 
 
+            /*
+             * Nowcasting prediction (calls the Python ML model)
+             *
+             * /predict?lat=28.3670&lon=79.4304&point=bareilly_center
+             */
+
+            server.createContext(
+                    "/predict",
+                    exchange -> {
+
+                        Map<String, String> params =
+                                getQueryParams(exchange.getRequestURI());
+
+                        double lat =
+                                Double.parseDouble(
+                                        params.get("lat")
+                                );
+
+                        double lon =
+                                Double.parseDouble(
+                                        params.get("lon")
+                                );
+
+                        String pointName =
+                                params.getOrDefault("point", "unknown");
+
+                        // Reuse the GFS hourly fetch since it already gives
+                        // enough history for the 3-hour lookback features.
+                        String rawData =
+                                OpenMeteoService.getGFS(lat, lon);
+
+                        String formattedData =
+                                WeatherFormatter.formatWeatherData(
+                                        rawData, "GFS", lat, lon
+                                );
+
+                        String prediction =
+                                PredictionService.getPrediction(
+                                        formattedData, pointName
+                                );
+
+                        sendResponse(exchange, prediction);
+                    }
+            );
+
+
             server.start();
 
             System.out.println(
