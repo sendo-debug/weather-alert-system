@@ -75,7 +75,7 @@ public class WeatherFormatter {
     }
 
 
- 
+
     // =========================================================
     // GET NUMERICAL ARRAY
     // =========================================================
@@ -168,11 +168,11 @@ public class WeatherFormatter {
 
 
     // =========================================================
-    // SUM PREVIOUS HOURS OF RAIN
+    // SUM PREVIOUS HOURS (used for rain / precip history)
     // =========================================================
 
-    private static double getRainHistory(
-            double[] rain,
+    private static double getSumHistory(
+            double[] values,
             int currentIndex,
             int hours
     ) {
@@ -185,17 +185,16 @@ public class WeatherFormatter {
                         currentIndex - hours
                 );
 
-        // IMPORTANT:
-        // We start BEFORE the current hour.
-        // So current hour rain is NOT included.
+        // We start BEFORE the current hour so the current
+        // hour's own value is not double-counted.
 
         for (int i = start;
              i < currentIndex;
              i++) {
 
-            if (!Double.isNaN(rain[i])) {
+            if (!Double.isNaN(values[i])) {
 
-                sum += rain[i];
+                sum += values[i];
             }
         }
 
@@ -234,216 +233,106 @@ public class WeatherFormatter {
         // =====================================================
 
         double[] temperature =
-                getArray(
-                        json,
-                        "temperature_2m"
-                );
+                getArray(json, "temperature_2m");
 
         double[] humidity =
-                getArray(
-                        json,
-                        "relative_humidity_2m"
-                );
+                getArray(json, "relative_humidity_2m");
 
         double[] dewPoint =
-                getArray(
-                        json,
-                        "dew_point_2m"
-                );
+                getArray(json, "dew_point_2m");
 
         double[] pressure =
-                getArray(
-                        json,
-                        "pressure_msl"
-                );
+                getArray(json, "pressure_msl");
 
         double[] windSpeed =
-                getArray(
-                        json,
-                        "wind_speed_10m"
-                );
+                getArray(json, "wind_speed_10m");
 
         double[] windGust =
-                getArray(
-                        json,
-                        "wind_gusts_10m"
-                );
+                getArray(json, "wind_gusts_10m");
 
         double[] precipitation =
-                getArray(
-                        json,
-                        "precipitation"
-                );
+                getArray(json, "precipitation");
 
         double[] rain =
-                getArray(
-                        json,
-                        "rain"
-                );
+                getArray(json, "rain");
 
         double[] cloudCover =
-                getArray(
-                        json,
-                        "cloud_cover"
-                );
+                getArray(json, "cloud_cover");
 
 
         // =====================================================
         // CURRENT VALUES
         // =====================================================
 
-        double currentTemperature =
-                getValue(
-                        temperature,
-                        currentIndex
-                );
-
-        double currentHumidity =
-                getValue(
-                        humidity,
-                        currentIndex
-                );
-
-        double currentDewPoint =
-                getValue(
-                        dewPoint,
-                        currentIndex
-                );
-
-        double currentPressure =
-                getValue(
-                        pressure,
-                        currentIndex
-                );
-
-        double currentWind =
-                getValue(
-                        windSpeed,
-                        currentIndex
-                );
-
-        double currentWindGust =
-                getValue(
-                        windGust,
-                        currentIndex
-                );
-
-        double currentPrecipitation =
-                getValue(
-                        precipitation,
-                        currentIndex
-                );
-
-        double currentRain =
-                getValue(
-                        rain,
-                        currentIndex
-                );
-
-        double currentCloudCover =
-                getValue(
-                        cloudCover,
-                        currentIndex
-                );
+        double currentTemperature = getValue(temperature, currentIndex);
+        double currentHumidity = getValue(humidity, currentIndex);
+        double currentDewPoint = getValue(dewPoint, currentIndex);
+        double currentPressure = getValue(pressure, currentIndex);
+        double currentWind = getValue(windSpeed, currentIndex);
+        double currentWindGust = getValue(windGust, currentIndex);
+        double currentPrecipitation = getValue(precipitation, currentIndex);
+        double currentRain = getValue(rain, currentIndex);
+        double currentCloudCover = getValue(cloudCover, currentIndex);
 
 
         // =====================================================
-        // PREVIOUS HOUR VALUES
+        // 1 HOUR AGO VALUES (kept from before, still useful to show)
         // =====================================================
 
-        int previousIndex =
-                currentIndex - 1;
-
-
-        double previousTemperature =
-                getValue(
-                        temperature,
-                        previousIndex
-                );
-
-        double previousHumidity =
-                getValue(
-                        humidity,
-                        previousIndex
-                );
-
-        double previousPressure =
-                getValue(
-                        pressure,
-                        previousIndex
-                );
-
-        double previousWind =
-                getValue(
-                        windSpeed,
-                        previousIndex
-                );
-
-
-        // =====================================================
-        // 1 HOUR CHANGES
-        // =====================================================
+        int oneHourAgoIndex = currentIndex - 1;
 
         double tempChange1h =
-                currentTemperature
-                - previousTemperature;
-
+                currentTemperature - getValue(temperature, oneHourAgoIndex);
 
         double humidityChange1h =
-                currentHumidity
-                - previousHumidity;
-
+                currentHumidity - getValue(humidity, oneHourAgoIndex);
 
         double pressureChange1h =
-                currentPressure
-                - previousPressure;
-
+                currentPressure - getValue(pressure, oneHourAgoIndex);
 
         double windChange1h =
-                currentWind
-                - previousWind;
+                currentWind - getValue(windSpeed, oneHourAgoIndex);
 
 
         // =====================================================
-        // RAIN HISTORY
+        // 3 HOURS AGO VALUES -- these feed the ML model directly
+        // (matches the Python model's training feature engineering)
         // =====================================================
 
-        double rainLast3h =
-                getRainHistory(
-                        rain,
-                        currentIndex,
-                        3
-                );
+        int threeHoursAgoIndex = currentIndex - 3;
+
+        double pressureChange3h =
+                currentPressure - getValue(pressure, threeHoursAgoIndex);
+
+        double humidityChange3h =
+                currentHumidity - getValue(humidity, threeHoursAgoIndex);
+
+        double windChange3h =
+                currentWind - getValue(windSpeed, threeHoursAgoIndex);
+
+        double precipLast3h =
+                getSumHistory(precipitation, currentIndex, 3);
 
 
-        double rainLast6h =
-                getRainHistory(
-                        rain,
-                        currentIndex,
-                        6
-                );
+        // =====================================================
+        // RAIN HISTORY (kept from before)
+        // =====================================================
+
+        double rainLast3h = getSumHistory(rain, currentIndex, 3);
+        double rainLast6h = getSumHistory(rain, currentIndex, 6);
 
 
         // =====================================================
         // TIME
         // =====================================================
 
-        String timestamp =
-                getCurrentISTTime();
-
+        String timestamp = getCurrentISTTime();
 
         ZonedDateTime now =
-                ZonedDateTime.now(
-                        ZoneId.of("Asia/Kolkata")
-                );
+                ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
 
-
-        int hour =
-                now.getHour();
-
-
-        int month =
-                now.getMonthValue();
+        int hour = now.getHour();
+        int month = now.getMonthValue();
 
 
         // =====================================================
@@ -452,88 +341,31 @@ public class WeatherFormatter {
 
         String formattedJson =
                 "{"
-
-                + "\"time\":\""
-                + timestamp
-                + "\","
-
-                + "\"temperature_2m\":"
-                + currentTemperature
-                + ","
-
-                + "\"relative_humidity_2m\":"
-                + currentHumidity
-                + ","
-
-                + "\"dew_point_2m\":"
-                + currentDewPoint
-                + ","
-
-                + "\"surface_pressure\":"
-                + currentPressure
-                + ","
-
-                + "\"wind_speed_10m\":"
-                + currentWind
-                + ","
-
-                + "\"wind_gusts_10m\":"
-                + currentWindGust
-                + ","
-
-                + "\"precipitation\":"
-                + currentPrecipitation
-                + ","
-
-                + "\"rain\":"
-                + currentRain
-                + ","
-
-                + "\"cloud_cover\":"
-                + currentCloudCover
-                + ","
-
-                + "\"latitude\":"
-                + latitude
-                + ","
-
-                + "\"longitude\":"
-                + longitude
-                + ","
-
-                + "\"hour\":"
-                + hour
-                + ","
-
-                + "\"month\":"
-                + month
-                + ","
-
-                + "\"temp_change_1h\":"
-                + tempChange1h
-                + ","
-
-                + "\"humidity_change_1h\":"
-                + humidityChange1h
-                + ","
-
-                + "\"pressure_change_1h\":"
-                + pressureChange1h
-                + ","
-
-                + "\"wind_change_1h\":"
-                + windChange1h
-                + ","
-
-                + "\"rain_last_3h\":"
-                + rainLast3h
-                + ","
-
-                + "\"rain_last_6h\":"
-                + rainLast6h
-
+                + "\"time\":\"" + timestamp + "\","
+                + "\"temperature_2m\":" + currentTemperature + ","
+                + "\"relative_humidity_2m\":" + currentHumidity + ","
+                + "\"dew_point_2m\":" + currentDewPoint + ","
+                + "\"surface_pressure\":" + currentPressure + ","
+                + "\"wind_speed_10m\":" + currentWind + ","
+                + "\"wind_gusts_10m\":" + currentWindGust + ","
+                + "\"precipitation\":" + currentPrecipitation + ","
+                + "\"rain\":" + currentRain + ","
+                + "\"cloud_cover\":" + currentCloudCover + ","
+                + "\"latitude\":" + latitude + ","
+                + "\"longitude\":" + longitude + ","
+                + "\"hour\":" + hour + ","
+                + "\"month\":" + month + ","
+                + "\"temp_change_1h\":" + tempChange1h + ","
+                + "\"humidity_change_1h\":" + humidityChange1h + ","
+                + "\"pressure_change_1h\":" + pressureChange1h + ","
+                + "\"wind_change_1h\":" + windChange1h + ","
+                + "\"rain_last_3h\":" + rainLast3h + ","
+                + "\"rain_last_6h\":" + rainLast6h + ","
+                + "\"pressure_change_3h\":" + pressureChange3h + ","
+                + "\"humidity_change_3h\":" + humidityChange3h + ","
+                + "\"wind_change_3h\":" + windChange3h + ","
+                + "\"precip_last_3h\":" + precipLast3h
                 + "}";
-
 
         return formattedJson;
     }
