@@ -16,7 +16,11 @@ public class WeatherServer {
 
             HttpServer server =
                     HttpServer.create(
-                            new InetSocketAddress(8080),
+                            new InetSocketAddress(
+    Integer.parseInt(
+        System.getenv().getOrDefault("PORT", "8080")
+    )
+),
                             0
                     );
 
