@@ -282,6 +282,12 @@ public class WeatherServer {
                         "Content-Type",
                         "application/json"
                 );
+        exchange.getResponseHeaders()
+        .set(
+                "Access-Control-Allow-Origin",
+                "*"
+        );
+        
 
 
         exchange.sendResponseHeaders(
