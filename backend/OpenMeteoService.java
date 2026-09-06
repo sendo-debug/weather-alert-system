@@ -21,8 +21,11 @@ public class OpenMeteoService {
                     + "relative_humidity_2m,"
                     + "pressure_msl,"
                     + "wind_speed_10m,"
-                    + "rain"
-                    + "&timezone=Asia%2FKolkata";;
+                    + "rain,"
+                    + "uv_index,"
+                    + "apparent_temperature,"
+                    + "visibility"
+                    + "&timezone=Asia%2FKolkata";
 
             HttpClient client =
                     HttpClient.newHttpClient();
