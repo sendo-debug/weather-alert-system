@@ -1,7 +1,7 @@
 async function getWeather() {
     try {
         const response = await fetch(
-            "http://localhost:8080/weather?lat=28.3670&lon=79.4304"
+            "https://weather-alert-system-2.onrender.com/weather?lat=28.3670&lon=79.4304"
         );
 
         if (!response.ok) {
