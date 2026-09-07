@@ -136,6 +136,7 @@ function populateCurrentWeather(data, placeName) {
     setText("curPressure", pressure !== undefined ? `${pressure} hPa` : undefined);
     setText("curVisibility", visibilityKm !== undefined ? `${visibilityKm} km` : undefined);
     setText("curUV", uv !== undefined ? `${uv}` : undefined);
+    setText("curRain", `${round(rain, 1)} mm`);
 
     if (humidity !== undefined) {
         const fill = document.getElementById("humidityFill");
