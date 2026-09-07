@@ -8,6 +8,7 @@
    ============================================================ */
 
 const WEATHER_API = "https://weather-alert-system-2.onrender.com/weather";
+const AI_PREDICT_API = "https://weather-alert-system-2.onrender.com/predict";
 const OPEN_METEO_FORECAST = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_GEOCODE = "https://geocoding-api.open-meteo.com/v1/search";
 const OPEN_METEO_ARCHIVE = "https://archive-api.open-meteo.com/v1/archive";
@@ -163,6 +164,78 @@ async function getCurrentWeather(lat, lon) {
     } catch (error) {
         console.error("Current weather error:", error);
         setText("heroDesc", "Couldn't load live weather right now — try again shortly.");
+    }
+}
+
+/* ---------- AI risk prediction (backend /predict) ---------- */
+
+// Turns a human place name like "Bareilly" or "New Delhi" into the
+// slug-style "point" identifier the /predict endpoint expects,
+// e.g. "bareilly_center", "new_delhi_center".
+function slugifyPoint(placeName) {
+    if (!placeName) return "current_location_center";
+    const slug = placeName
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    return slug ? `${slug}_center` : "current_location_center";
+}
+
+function riskPresentation(label) {
+    switch ((label || "").toLowerCase()) {
+        case "normal":
+            return { icon: "✅", tag: "NORMAL", tone: "low" };
+        case "watch":
+            return { icon: "👀", tag: "WATCH", tone: "moderate" };
+        case "warning":
+            return { icon: "⚠️", tag: "WARNING", tone: "high" };
+        case "severe":
+        case "danger":
+            return { icon: "🚨", tag: "SEVERE", tone: "high" };
+        default:
+            return { icon: "🤖", tag: (label || "UNKNOWN").toUpperCase(), tone: "moderate" };
+    }
+}
+
+function populateAIPrediction(data) {
+    console.log("AI prediction data:", data);
+
+    const { point_name, risk_score, label } = data;
+    const { icon, tag, tone } = riskPresentation(label);
+    const pct = round((risk_score || 0) * 100, 1);
+
+    setText("aiPointName", point_name);
+    setText("aiRiskLabel", tag);
+    setText("aiRiskIcon", icon);
+    setText("aiRiskScore", pct !== undefined ? `${pct}%` : undefined);
+
+    const box = document.getElementById("aiRiskBox");
+    if (box) {
+        box.dataset.tone = tone;
+        box.style.display = "flex";
+    }
+
+    const bar = document.getElementById("aiRiskFill");
+    if (bar && pct !== undefined) bar.style.width = `${Math.min(pct, 100)}%`;
+}
+
+async function getAIPrediction(lat, lon, placeName) {
+    try {
+        const point = slugifyPoint(placeName);
+        const url = `${AI_PREDICT_API}?lat=${lat}&lon=${lon}&point=${encodeURIComponent(point)}`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("AI prediction request failed");
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        populateAIPrediction(data);
+    } catch (error) {
+        console.error("AI prediction error:", error);
+        const box = document.getElementById("aiRiskBox");
+        if (box) box.style.display = "none";
     }
 }
 
@@ -450,12 +523,17 @@ function getLocationAndWeather() {
     }
 
     navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
             const { latitude, longitude } = position.coords;
             console.log(`Location acquired: lat=${latitude}, lon=${longitude}`);
             lastKnownCoords = { lat: latitude, lon: longitude };
             getCurrentWeather(latitude, longitude);
             getForecastData(latitude, longitude);
+
+            // AI risk prediction needs a place name for the "point" id,
+            // so resolve it once here rather than reverse-geocoding twice.
+            const placeName = await reverseGeocode(latitude, longitude);
+            getAIPrediction(latitude, longitude, placeName);
         },
         (error) => {
             console.error("Geolocation error:", error.message);
@@ -465,6 +543,8 @@ function getLocationAndWeather() {
             if (hourly) hourly.innerHTML = '<p class="history-empty">Enable location access to see the hourly forecast.</p>';
             const grid = document.getElementById("forecastGrid");
             if (grid) grid.innerHTML = '<p class="history-empty">Enable location access to see the 7-day forecast.</p>';
+            const aiBox = document.getElementById("aiRiskBox");
+            if (aiBox) aiBox.style.display = "none";
         },
         {
             enableHighAccuracy: true,
