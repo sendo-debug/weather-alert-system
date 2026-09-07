@@ -1096,40 +1096,38 @@ padding:3px;
                     <div class="hero reveal-up" style="--i: 0">
                         <div>
                             <div class="hero-loc">
-                                📍 Invertis University, Uttar Pradesh
+                                📍 <span id="heroLoc">Locating…</span>
                             </div>
-                            <div class="hero-temp">31°</div>
-                            <p class="hero-desc">
-                                Warm and humid, with rain building through the
-                                afternoon.
+                            <div class="hero-temp" id="heroTemp">--°</div>
+                            <p class="hero-desc" id="heroDesc">
+                                Fetching live conditions for your location…
                             </p>
                         </div>
                         <div class="hero-right">
-                            <div class="rain-eta">🌧️ Rain in 75 min</div>
-                            <div class="rain-sub">
-                                Humidity holding at 84% — expect a sharp drop in
-                                temperature once it breaks.
+                            <div class="rain-eta" id="rainEta">🌧️ —</div>
+                            <div class="rain-sub" id="rainSub">
+                                Waiting for live data…
                             </div>
-                            <div class="humidity-bar"><i></i></div>
+                            <div class="humidity-bar"><i id="humidityFill"></i></div>
                         </div>
                     </div>
 
-                    <div class="alert reveal-up" style="--i: 1">
+                    <div class="alert reveal-up" style="--i: 1" id="alertBox">
                         <div class="alert-icon">⚠️</div>
                         <div class="alert-body">
-                            <h2>Heavy rain expected within 75 minutes</h2>
-                            <p>
+                            <h2 id="alertTitle">Heavy rain expected within 75 minutes</h2>
+                            <p id="alertBody">
                                 Move outdoor equipment indoors and avoid open
                                 fields on campus.
                             </p>
                         </div>
-                        <div class="risk-tag">HIGH RISK</div>
+                        <div class="risk-tag" id="riskTag">HIGH RISK</div>
                     </div>
 
                     <div class="section-label reveal-up" style="--i: 2">
                         Next 24 hours
                     </div>
-                    <div class="hourly-weather reveal-up" style="--i: 2">
+                    <div class="hourly-weather reveal-up" style="--i: 2" id="hourlyWeather">
                         <div class="hour">
                             <p>12 AM</p>
                             <span class="ic">☁️</span>
@@ -1257,6 +1255,7 @@ padding:3px;
                     </div>
                     <div class="map-frame reveal-up" style="--i: 3">
                         <iframe
+                            id="mapFrame"
                             src="https://www.google.com/maps?q=invertis+university,+Uttar+Pradesh&output=embed"
                             loading="lazy"
                             allowfullscreen
@@ -1273,42 +1272,42 @@ padding:3px;
                         <div class="card reveal-up" style="--i: 1">
                             <span class="ic">🌡️</span>
                             <div class="label">Temperature</div>
-                            <div class="value">31°C</div>
+                            <div class="value" id="curTemp">--°C</div>
                         </div>
                         <div class="card reveal-up" style="--i: 2">
                             <span class="ic">🤗</span>
                             <div class="label">Feels like</div>
-                            <div class="value">36°C</div>
+                            <div class="value" id="curFeels">--°C</div>
                         </div>
                         <div class="card reveal-up" style="--i: 3">
                             <span class="ic">💧</span>
                             <div class="label">Humidity</div>
-                            <div class="value">84%</div>
+                            <div class="value" id="curHumidity">--%</div>
                         </div>
                         <div class="card reveal-up" style="--i: 4">
                             <span class="ic">🌬️</span>
                             <div class="label">Wind</div>
-                            <div class="value">18 km/h</div>
+                            <div class="value" id="curWind">-- km/h</div>
                         </div>
                         <div class="card reveal-up" style="--i: 5">
                             <span class="ic">🧭</span>
                             <div class="label">Pressure</div>
-                            <div class="value">1004 hPa</div>
+                            <div class="value" id="curPressure">-- hPa</div>
                         </div>
                         <div class="card reveal-up" style="--i: 6">
                             <span class="ic">👁️</span>
                             <div class="label">Visibility</div>
-                            <div class="value">6 km</div>
+                            <div class="value" id="curVisibility">-- km</div>
                         </div>
                         <div class="card reveal-up" style="--i: 7">
                             <span class="ic">☀️</span>
                             <div class="label">UV Index</div>
-                            <div class="value">6</div>
+                            <div class="value" id="curUV">--</div>
                         </div>
                         <div class="card reveal-up" style="--i: 8">
                             <span class="ic">☁️</span>
                             <div class="label">Cloud cover</div>
-                            <div class="value">72%</div>
+                            <div class="value" id="curCloud">--%</div>
                         </div>
                     </div>
                 </section>
@@ -1318,7 +1317,7 @@ padding:3px;
                     <div class="section-label reveal-up" style="--i: 0">
                         7-day forecast
                     </div>
-                    <div class="forecast-grid">
+                    <div class="forecast-grid" id="forecastGrid">
                         <div class="day-card reveal-up" style="--i: 1">
                             <div class="dname">TODAY</div>
                             <span class="ic">🌦️</span>
@@ -1419,9 +1418,9 @@ padding:3px;
                 <!-- ============ ASTRONOMY ============ -->
                 <section id="astronomy-section" class="section">
                     <div class="astro-hero reveal-up" style="--i: 0">
-                        <span class="moon-emoji">🌔</span>
-                        <h3>Waxing Gibbous · 78% illuminated</h3>
-                        <p>Moonrise 2:12 PM · Moonset 1:04 AM</p>
+                        <span class="moon-emoji" id="moonEmoji">🌔</span>
+                        <h3 id="moonPhaseTitle">Waxing Gibbous · 78% illuminated</h3>
+                        <p id="moonRiseSet">Moonrise 2:12 PM · Moonset 1:04 AM</p>
                     </div>
                     <div class="section-label reveal-up" style="--i: 1">
                         Sun &amp; day length
@@ -1430,22 +1429,22 @@ padding:3px;
                         <div class="card reveal-up" style="--i: 2">
                             <span class="ic">🌅</span>
                             <div class="label">Sunrise</div>
-                            <div class="value">5:48 AM</div>
+                            <div class="value" id="sunriseVal">5:48 AM</div>
                         </div>
                         <div class="card reveal-up" style="--i: 3">
                             <span class="ic">🌇</span>
                             <div class="label">Sunset</div>
-                            <div class="value">6:37 PM</div>
+                            <div class="value" id="sunsetVal">6:37 PM</div>
                         </div>
                         <div class="card reveal-up" style="--i: 4">
                             <span class="ic">⏱️</span>
                             <div class="label">Day length</div>
-                            <div class="value">12h 49m</div>
+                            <div class="value" id="daylenVal">12h 49m</div>
                         </div>
                         <div class="card reveal-up" style="--i: 5">
                             <span class="ic">🌙</span>
                             <div class="label">Moon phase</div>
-                            <div class="value">Gibbous</div>
+                            <div class="value" id="moonPhaseVal">Gibbous</div>
                         </div>
                     </div>
                 </section>
