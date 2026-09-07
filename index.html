@@ -1112,142 +1112,20 @@ padding:3px;
                         </div>
                     </div>
 
-                    <div class="alert reveal-up" style="--i: 1" id="alertBox">
+                    <div class="alert reveal-up" style="--i: 1; display: none" id="alertBox">
                         <div class="alert-icon">⚠️</div>
                         <div class="alert-body">
-                            <h2 id="alertTitle">Heavy rain expected within 75 minutes</h2>
-                            <p id="alertBody">
-                                Move outdoor equipment indoors and avoid open
-                                fields on campus.
-                            </p>
+                            <h2 id="alertTitle"></h2>
+                            <p id="alertBody"></p>
                         </div>
-                        <div class="risk-tag" id="riskTag">HIGH RISK</div>
+                        <div class="risk-tag" id="riskTag"></div>
                     </div>
 
                     <div class="section-label reveal-up" style="--i: 2">
                         Next 24 hours
                     </div>
                     <div class="hourly-weather reveal-up" style="--i: 2" id="hourlyWeather">
-                        <div class="hour">
-                            <p>12 AM</p>
-                            <span class="ic">☁️</span>
-                            <h3>27°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>1 AM</p>
-                            <span class="ic">☁️</span>
-                            <h3>27°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>2 AM</p>
-                            <span class="ic">☁️</span>
-                            <h3>27°</h3>
-                        </div>
-                        <div class="hour rainy">
-                            <p>3 AM</p>
-                            <span class="ic">🌧️</span>
-                            <h3>26°</h3>
-                        </div>
-                        <div class="hour rainy">
-                            <p>4 AM</p>
-                            <span class="ic">🌧️</span>
-                            <h3>26°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>5 AM</p>
-                            <span class="ic">🌅</span>
-                            <h3>27°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>6 AM</p>
-                            <span class="ic">☀️</span>
-                            <h3>28°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>7 AM</p>
-                            <span class="ic">☀️</span>
-                            <h3>30°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>8 AM</p>
-                            <span class="ic">☀️</span>
-                            <h3>31°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>9 AM</p>
-                            <span class="ic">🌤️</span>
-                            <h3>32°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>10 AM</p>
-                            <span class="ic">🌤️</span>
-                            <h3>33°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>11 AM</p>
-                            <span class="ic">☀️</span>
-                            <h3>34°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>12 PM</p>
-                            <span class="ic">☀️</span>
-                            <h3>35°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>1 PM</p>
-                            <span class="ic">☀️</span>
-                            <h3>36°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>2 PM</p>
-                            <span class="ic">🌤️</span>
-                            <h3>36°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>3 PM</p>
-                            <span class="ic">⛅</span>
-                            <h3>35°</h3>
-                        </div>
-                        <div class="hour rainy">
-                            <p>4 PM</p>
-                            <span class="ic">🌦️</span>
-                            <h3>34°</h3>
-                        </div>
-                        <div class="hour rainy">
-                            <p>5 PM</p>
-                            <span class="ic">🌧️</span>
-                            <h3>33°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>6 PM</p>
-                            <span class="ic">🌇</span>
-                            <h3>31°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>7 PM</p>
-                            <span class="ic">🌙</span>
-                            <h3>30°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>8 PM</p>
-                            <span class="ic">🌙</span>
-                            <h3>29°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>9 PM</p>
-                            <span class="ic">☁️</span>
-                            <h3>29°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>10 PM</p>
-                            <span class="ic">☁️</span>
-                            <h3>28°</h3>
-                        </div>
-                        <div class="hour">
-                            <p>11 PM</p>
-                            <span class="ic">☁️</span>
-                            <h3>27°</h3>
-                        </div>
+                        <p class="history-empty" style="padding: 0 4px;">Loading hourly forecast…</p>
                     </div>
 
                     <div class="section-label reveal-up" style="--i: 3">
@@ -1318,69 +1196,7 @@ padding:3px;
                         7-day forecast
                     </div>
                     <div class="forecast-grid" id="forecastGrid">
-                        <div class="day-card reveal-up" style="--i: 1">
-                            <div class="dname">TODAY</div>
-                            <span class="ic">🌦️</span>
-                            <div>
-                                <span class="hi">35°</span
-                                ><span class="lo">26°</span>
-                            </div>
-                            <div class="cond">Scattered rain</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 2">
-                            <div class="dname">MON</div>
-                            <span class="ic">⛈️</span>
-                            <div>
-                                <span class="hi">33°</span
-                                ><span class="lo">25°</span>
-                            </div>
-                            <div class="cond">Thunderstorms</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 3">
-                            <div class="dname">TUE</div>
-                            <span class="ic">🌧️</span>
-                            <div>
-                                <span class="hi">31°</span
-                                ><span class="lo">24°</span>
-                            </div>
-                            <div class="cond">Heavy rain</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 4">
-                            <div class="dname">WED</div>
-                            <span class="ic">⛅</span>
-                            <div>
-                                <span class="hi">32°</span
-                                ><span class="lo">24°</span>
-                            </div>
-                            <div class="cond">Partly cloudy</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 5">
-                            <div class="dname">THU</div>
-                            <span class="ic">☀️</span>
-                            <div>
-                                <span class="hi">36°</span
-                                ><span class="lo">25°</span>
-                            </div>
-                            <div class="cond">Clear skies</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 6">
-                            <div class="dname">FRI</div>
-                            <span class="ic">☀️</span>
-                            <div>
-                                <span class="hi">37°</span
-                                ><span class="lo">26°</span>
-                            </div>
-                            <div class="cond">Sunny, hot</div>
-                        </div>
-                        <div class="day-card reveal-up" style="--i: 7">
-                            <div class="dname">SAT</div>
-                            <span class="ic">🌤️</span>
-                            <div>
-                                <span class="hi">35°</span
-                                ><span class="lo">25°</span>
-                            </div>
-                            <div class="cond">Mild haze</div>
-                        </div>
+                        <p class="history-empty">Loading 7-day forecast…</p>
                     </div>
                 </section>
 
@@ -1399,8 +1215,7 @@ padding:3px;
                             <input
                                 type="text"
                                 id="histCity"
-                                value="Invertis University"
-                                placeholder="Enter a location"
+                                placeholder="e.g. Bareilly, Lucknow, Delhi…"
                             />
                         </div>
                         <button class="btn-primary" onclick="fetchHistory()">
@@ -1418,9 +1233,9 @@ padding:3px;
                 <!-- ============ ASTRONOMY ============ -->
                 <section id="astronomy-section" class="section">
                     <div class="astro-hero reveal-up" style="--i: 0">
-                        <span class="moon-emoji" id="moonEmoji">🌔</span>
-                        <h3 id="moonPhaseTitle">Waxing Gibbous · 78% illuminated</h3>
-                        <p id="moonRiseSet">Moonrise 2:12 PM · Moonset 1:04 AM</p>
+                        <span class="moon-emoji" id="moonEmoji">🌙</span>
+                        <h3 id="moonPhaseTitle">Loading…</h3>
+                        <p id="moonRiseSet">Calculating today's moon phase…</p>
                     </div>
                     <div class="section-label reveal-up" style="--i: 1">
                         Sun &amp; day length
@@ -1429,22 +1244,22 @@ padding:3px;
                         <div class="card reveal-up" style="--i: 2">
                             <span class="ic">🌅</span>
                             <div class="label">Sunrise</div>
-                            <div class="value" id="sunriseVal">5:48 AM</div>
+                            <div class="value" id="sunriseVal">--:--</div>
                         </div>
                         <div class="card reveal-up" style="--i: 3">
                             <span class="ic">🌇</span>
                             <div class="label">Sunset</div>
-                            <div class="value" id="sunsetVal">6:37 PM</div>
+                            <div class="value" id="sunsetVal">--:--</div>
                         </div>
                         <div class="card reveal-up" style="--i: 4">
                             <span class="ic">⏱️</span>
                             <div class="label">Day length</div>
-                            <div class="value" id="daylenVal">12h 49m</div>
+                            <div class="value" id="daylenVal">--</div>
                         </div>
                         <div class="card reveal-up" style="--i: 5">
                             <span class="ic">🌙</span>
                             <div class="label">Moon phase</div>
-                            <div class="value" id="moonPhaseVal">Gibbous</div>
+                            <div class="value" id="moonPhaseVal">--</div>
                         </div>
                     </div>
                 </section>
@@ -1551,58 +1366,6 @@ padding:3px;
                 });
             });
 
-            function fetchHistory() {
-                const dateVal = document.getElementById("histDate").value;
-                const city =
-                    document.getElementById("histCity").value ||
-                    "Invertis University";
-                const output = document.getElementById("historyOutput");
-
-                if (!dateVal) {
-                    output.innerHTML =
-                        '<p class="history-empty">Please choose a date first.</p>';
-                    return;
-                }
-
-                let seed = 0;
-                for (let i = 0; i < dateVal.length; i++) {
-                    seed = (seed * 31 + dateVal.charCodeAt(i)) % 1000;
-                }
-                const temp = 24 + (seed % 14);
-                const humidity = 40 + (seed % 50);
-                const wind = 6 + (seed % 20);
-                const conditions = [
-                    "Clear skies",
-                    "Partly cloudy",
-                    "Light rain",
-                    "Overcast",
-                    "Thunderstorms",
-                    "Hazy sunshine",
-                ];
-                const cond = conditions[seed % conditions.length];
-                const icons = ["☀️", "⛅", "🌦️", "☁️", "⛈️", "🌤️"];
-                const icon = icons[seed % icons.length];
-
-                const formatted = new Date(
-                    dateVal + "T00:00:00",
-                ).toLocaleDateString(undefined, {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                });
-
-                output.innerHTML = `
-    <div class="section-label reveal-up" style="--i:0">Results for ${formatted} · ${city}</div>
-    <div class="cards">
-      <div class="card reveal-up" style="--i:1"><span class="ic">${icon}</span><div class="label">Condition</div><div class="value">${cond}</div></div>
-      <div class="card reveal-up" style="--i:2"><span class="ic">🌡️</span><div class="label">Temperature</div><div class="value">${temp}°C</div></div>
-      <div class="card reveal-up" style="--i:3"><span class="ic">💧</span><div class="label">Humidity</div><div class="value">${humidity}%</div></div>
-      <div class="card reveal-up" style="--i:4"><span class="ic">🌬️</span><div class="label">Wind</div><div class="value">${wind} km/h</div></div>
-    </div>
-  `;
-                playReveal(output);
-            }
         </script>
         <script src="script.js"></script>
     </body>
