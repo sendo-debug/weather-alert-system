@@ -1,9 +1,10 @@
 /* ============================================================
    WeatherGuard AI — live data wiring
-   1. Ask the browser for the user's real GPS coordinates
-   2. Reverse-geocode those coordinates into a place name
-   3. Fetch live weather for those coordinates from the backend
-   4. Push everything into the DOM (no more hardcoded 31° / campus name)
+   Talks to the Java backend's /weather endpoint, which passes
+   through Open-Meteo's raw "current" object unmodified:
+   { current: { temperature_2m, relative_humidity_2m,
+     pressure_msl, wind_speed_10m, rain, uv_index,
+     apparent_temperature, visibility } }
    ============================================================ */
 
 const WEATHER_API = "https://weather-alert-system-2.onrender.com/weather";
@@ -13,22 +14,10 @@ function setText(id, value) {
     if (el && value !== undefined && value !== null) el.textContent = value;
 }
 
-/* Pull a value out of the response no matter how the backend nested it.
-   Add/reorder paths here if you check the console log and see different
-   field names — this tries the common shapes so nothing breaks silently. */
-function pick(obj, paths, fallback) {
-    for (const path of paths) {
-        const val = path.split(".").reduce(
-            (o, k) => (o && o[k] !== undefined ? o[k] : undefined),
-            obj,
-        );
-        if (val !== undefined && val !== null && val !== "") return val;
-    }
-    return fallback;
-}
-
-function round(n) {
-    return typeof n === "number" ? Math.round(n) : n;
+function round(n, decimals = 0) {
+    if (typeof n !== "number" || Number.isNaN(n)) return undefined;
+    const f = Math.pow(10, decimals);
+    return Math.round(n * f) / f;
 }
 
 async function reverseGeocode(lat, lon) {
@@ -50,86 +39,58 @@ async function reverseGeocode(lat, lon) {
     }
 }
 
+function describeConditions(rainMm, humidity) {
+    if (rainMm > 0.5) return "Rain falling right now — grab an umbrella.";
+    if (humidity > 80) return "Warm and humid conditions.";
+    if (humidity < 30) return "Dry conditions, clear skies likely.";
+    return "Mild conditions right now.";
+}
+
 function populateWeatherUI(data, placeName) {
     console.log("Weather data:", data);
 
+    const current = data.current || {};
+
     setText("heroLoc", placeName);
 
-    const temp = round(
-        pick(data, [
-            "temperature",
-            "temp",
-            "current.temperature",
-            "current.temp",
-            "current_weather.temperature",
-            "main.temp",
-        ]),
-    );
+    const temp = round(current.temperature_2m);
+    const feelsLike = round(current.apparent_temperature);
+    const humidity = round(current.relative_humidity_2m);
+    const wind = round(current.wind_speed_10m);
+    const pressure = round(current.pressure_msl);
+    const visibilityKm =
+        current.visibility !== undefined
+            ? round(current.visibility / 1000, 1)
+            : undefined;
+    const uv = round(current.uv_index, 1);
+    const rain = current.rain;
+
     if (temp !== undefined) setText("heroTemp", `${temp}°`);
-
-    const feelsLike = round(
-        pick(data, [
-            "feels_like",
-            "feelsLike",
-            "current.feels_like",
-            "main.feels_like",
-        ]),
-    );
-    const humidity = round(
-        pick(data, ["humidity", "current.humidity", "main.humidity"]),
-    );
-    const wind = round(
-        pick(data, [
-            "wind_speed",
-            "windSpeed",
-            "wind.speed",
-            "current.wind_speed",
-            "current_weather.windspeed",
-        ]),
-    );
-    const pressure = round(
-        pick(data, ["pressure", "current.pressure", "main.pressure"]),
-    );
-    const visibility = pick(data, ["visibility", "current.visibility"]);
-    const uv = pick(data, ["uv_index", "uvi", "current.uvi"]);
-    const cloud = round(
-        pick(data, ["cloud_cover", "clouds.all", "current.clouds"]),
-    );
-    const description = pick(data, [
-        "description",
-        "condition",
-        "weather.0.description",
-        "current.condition.text",
-        "summary",
-    ]);
-    const alertMsg = pick(data, ["alert", "alert_message", "warning"]);
-
-    setText(
-        "heroDesc",
-        description || "Live conditions for your current location.",
-    );
+    setText("heroDesc", describeConditions(rain || 0, humidity ?? 50));
 
     setText("curTemp", temp !== undefined ? `${temp}°C` : undefined);
     setText("curFeels", feelsLike !== undefined ? `${feelsLike}°C` : undefined);
     setText("curHumidity", humidity !== undefined ? `${humidity}%` : undefined);
     setText("curWind", wind !== undefined ? `${wind} km/h` : undefined);
     setText("curPressure", pressure !== undefined ? `${pressure} hPa` : undefined);
-    setText("curVisibility", visibility !== undefined ? `${visibility} km` : undefined);
+    setText("curVisibility", visibilityKm !== undefined ? `${visibilityKm} km` : undefined);
     setText("curUV", uv !== undefined ? `${uv}` : undefined);
-    setText("curCloud", cloud !== undefined ? `${cloud}%` : undefined);
+    // Your /weather endpoint doesn't request cloud_cover, so this stays
+    // blank unless you add "cloud_cover" to OpenMeteoService.getWeather().
+    setText("curCloud", "—");
 
     if (humidity !== undefined) {
         const fill = document.getElementById("humidityFill");
         if (fill) fill.style.width = `${humidity}%`;
     }
 
-    if (alertMsg) {
+    if (rain && rain > 2) {
         const box = document.getElementById("alertBox");
         if (box) box.style.display = "flex";
-        setText("alertTitle", alertMsg);
+        setText("alertTitle", "Rain is currently falling in your area");
+        setText("alertBody", "Move outdoor equipment indoors and avoid open areas.");
     }
 
-    // Point the embedded map at the real coordinates too
     const map = document.getElementById("mapFrame");
     if (map && data.__lat !== undefined && data.__lon !== undefined) {
         map.src = `https://www.google.com/maps?q=${data.__lat},${data.__lon}&output=embed`;
@@ -151,10 +112,14 @@ async function getWeather(lat, lon) {
         data.__lat = lat;
         data.__lon = lon;
 
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
         populateWeatherUI(data, placeName);
     } catch (error) {
         console.error("Error:", error);
-        setText("heroDesc", "Couldn't load live weather right now.");
+        setText("heroDesc", "Couldn't load live weather right now — try again shortly.");
     }
 }
 
@@ -189,35 +154,3 @@ function getLocationAndWeather() {
 }
 
 getLocationAndWeather();
-
-```java
-/**
- * Sends a JSON response to the browser with CORS enabled.
- */
-private static void sendResponse(
-        HttpExchange exchange,
-        String response
-) throws IOException {
-
-    byte[] responseBytes = response.getBytes();
-
-    exchange.getResponseHeaders().set(
-            "Content-Type",
-            "application/json"
-    );
-
-    exchange.getResponseHeaders().set(
-            "Access-Control-Allow-Origin",
-            "*"
-    );
-
-    exchange.sendResponseHeaders(
-            200,
-            responseBytes.length
-    );
-
-    try (OutputStream os = exchange.getResponseBody()) {
-        os.write(responseBytes);
-    }
-}
-```
