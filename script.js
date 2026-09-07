@@ -40,3 +40,35 @@ function getLocationAndWeather() {
 }
 
 getLocationAndWeather();
+
+```java
+/**
+ * Sends a JSON response to the browser with CORS enabled.
+ */
+private static void sendResponse(
+        HttpExchange exchange,
+        String response
+) throws IOException {
+
+    byte[] responseBytes = response.getBytes();
+
+    exchange.getResponseHeaders().set(
+            "Content-Type",
+            "application/json"
+    );
+
+    exchange.getResponseHeaders().set(
+            "Access-Control-Allow-Origin",
+            "*"
+    );
+
+    exchange.sendResponseHeaders(
+            200,
+            responseBytes.length
+    );
+
+    try (OutputStream os = exchange.getResponseBody()) {
+        os.write(responseBytes);
+    }
+}
+```
