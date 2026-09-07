@@ -623,7 +623,7 @@ async function initRiskMap() {
             9.3
         );
 
-        /* OpenStreetMap basemap — no API key required */
+        /* OpenStreetMap basemap — NO CARTO, NO API KEY */
 L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
