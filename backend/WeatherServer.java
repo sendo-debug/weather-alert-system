@@ -17,10 +17,10 @@ public class WeatherServer {
             HttpServer server =
                     HttpServer.create(
                             new InetSocketAddress(
-    Integer.parseInt(
-        System.getenv().getOrDefault("PORT", "8080")
-    )
-),
+                                    Integer.parseInt(
+                                            System.getenv().getOrDefault("PORT", "8080")
+                                    )
+                            ),
                             0
                     );
 
@@ -96,11 +96,11 @@ public class WeatherServer {
 
 
                         String formattedData =
-                               WeatherFormatter.formatWeatherData(
-                                    rawData,
-                                    "ECMWF",
-                                    lat,
-                                    lon
+                                WeatherFormatter.formatWeatherData(
+                                        rawData,
+                                        "ECMWF",
+                                        lat,
+                                        lon
                                 );
 
 
@@ -241,15 +241,22 @@ public class WeatherServer {
 
                         String formattedData =
                                 WeatherFormatter.formatWeatherData(
-                                        rawData, "GFS", lat, lon
+                                        rawData,
+                                        "GFS",
+                                        lat,
+                                        lon
                                 );
 
                         String prediction =
                                 PredictionService.getPrediction(
-                                        formattedData, pointName
+                                        formattedData,
+                                        pointName
                                 );
 
-                        sendResponse(exchange, prediction);
+                        sendResponse(
+                                exchange,
+                                prediction
+                        );
                     }
             );
 
@@ -318,37 +325,36 @@ public class WeatherServer {
 
 
     /*
-     * Sends JSON response to browser.
+     * Sends a JSON response to the browser with CORS enabled.
      */
 
     private static void sendResponse(
-        HttpExchange exchange,
-        String response
-) throws IOException {
+            HttpExchange exchange,
+            String response
+    ) throws IOException {
 
-    exchange.getResponseHeaders()
-            .set(
-                    "Content-Type",
-                    "application/json"
-            );
+        byte[] responseBytes =
+                response.getBytes();
 
-    exchange.getResponseHeaders()
-            .set(
-                    "Access-Control-Allow-Origin",
-                    "*"
-            );
+        exchange.getResponseHeaders().set(
+                "Content-Type",
+                "application/json"
+        );
 
-    exchange.sendResponseHeaders(
-            200,
-            response.getBytes().length
-    );
+        exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin",
+                "*"
+        );
 
-    OutputStream os =
-            exchange.getResponseBody();
+        exchange.sendResponseHeaders(
+                200,
+                responseBytes.length
+        );
 
-    os.write(
-            response.getBytes()
-    );
+        try (OutputStream os =
+                     exchange.getResponseBody()) {
 
-    os.close();
+            os.write(responseBytes);
+        }
+    }
 }
