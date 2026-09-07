@@ -1,14 +1,23 @@
+```html
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WeatherGuard AI — Invertis University</title>
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
         <link
             href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
+        />
+
+        <!-- Leaflet -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         />
 
         <style>
@@ -60,9 +69,11 @@
             .display {
                 font-family: "Fraunces", serif;
             }
+
             .mono {
                 font-family: "IBM Plex Mono", monospace;
             }
+
             a {
                 color: inherit;
             }
@@ -76,6 +87,7 @@
             }
 
             /* ============ Header ============ */
+
             header {
                 background: var(--sky-deep);
                 color: #fff;
@@ -111,11 +123,22 @@
                 flex-shrink: 0;
                 animation: float 4s ease-in-out infinite;
             }
+
+            .brand-mark img {
+                width: 55px;
+                height: 55px;
+                border-radius: 50%;
+                object-fit: cover;
+                background: white;
+                padding: 3px;
+            }
+
             @keyframes float {
                 0%,
                 100% {
                     transform: translateY(0);
                 }
+
                 50% {
                     transform: translateY(-4px);
                 }
@@ -158,10 +181,12 @@
                     background 0.15s ease,
                     transform 0.2s ease;
             }
+
             #themeBtn:hover {
                 background: rgba(255, 255, 255, 0.14);
                 transform: rotate(20deg);
             }
+
             #themeBtn:focus-visible,
             a:focus-visible,
             .card:focus-visible,
@@ -171,6 +196,7 @@
             }
 
             /* ============ Nav tabs ============ */
+
             #navbar {
                 position: sticky;
                 top: 76px;
@@ -183,6 +209,7 @@
                 overflow-x: auto;
                 box-shadow: 0 4px 14px rgba(10, 24, 48, 0.04);
             }
+
             #navbar::-webkit-scrollbar {
                 display: none;
             }
@@ -202,13 +229,16 @@
                     background 0.25s ease,
                     transform 0.15s ease;
             }
+
             .nav-item:hover {
                 color: var(--ink);
                 background: rgba(28, 58, 99, 0.06);
             }
+
             .nav-item:active {
                 transform: scale(0.96);
             }
+
             .nav-item.active-tab {
                 color: #fff;
                 background: linear-gradient(
@@ -220,6 +250,7 @@
             }
 
             /* ============ Layout ============ */
+
             .container {
                 width: 92%;
                 max-width: 1040px;
@@ -230,15 +261,18 @@
             .section {
                 display: none;
             }
+
             .section.active-section {
                 display: block;
                 animation: sectionFade 0.4s ease both;
             }
+
             @keyframes sectionFade {
                 from {
                     opacity: 0;
                     transform: translateY(10px);
                 }
+
                 to {
                     opacity: 1;
                     transform: translateY(0);
@@ -248,9 +282,13 @@
             .reveal-up {
                 opacity: 0;
                 transform: translateY(38px);
-                animation: revealUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                animation: revealUp
+                    0.6s
+                    cubic-bezier(0.22, 1, 0.36, 1)
+                    forwards;
                 animation-delay: calc(var(--i, 0) * 70ms);
             }
+
             @keyframes revealUp {
                 to {
                     opacity: 1;
@@ -259,6 +297,7 @@
             }
 
             /* ============ Hero ============ */
+
             .hero {
                 background: linear-gradient(
                     150deg,
@@ -275,6 +314,7 @@
                 position: relative;
                 overflow: hidden;
             }
+
             .hero::after {
                 content: "";
                 position: absolute;
@@ -290,12 +330,14 @@
                 pointer-events: none;
                 animation: pulseGlow 5s ease-in-out infinite;
             }
+
             @keyframes pulseGlow {
                 0%,
                 100% {
                     opacity: 0.6;
                     transform: scale(1);
                 }
+
                 50% {
                     opacity: 1;
                     transform: scale(1.15);
@@ -336,11 +378,13 @@
                 justify-content: center;
                 gap: 10px;
             }
+
             .hero-right .rain-eta {
                 font-family: "Fraunces", serif;
                 font-size: 26px;
                 font-weight: 600;
             }
+
             .hero-right .rain-sub {
                 font-size: 13px;
                 color: rgba(255, 255, 255, 0.65);
@@ -353,6 +397,7 @@
                 background: rgba(255, 255, 255, 0.15);
                 overflow: hidden;
             }
+
             .humidity-bar i {
                 display: block;
                 height: 100%;
@@ -361,6 +406,7 @@
                 border-radius: 4px;
                 animation: fillBar 1.2s ease 0.3s forwards;
             }
+
             @keyframes fillBar {
                 to {
                     width: 84%;
@@ -368,6 +414,7 @@
             }
 
             /* ============ Alert ============ */
+
             .alert {
                 margin-top: 18px;
                 background: var(--paper-card);
@@ -379,6 +426,7 @@
                 align-items: center;
                 gap: 16px;
             }
+
             .alert-icon {
                 width: 46px;
                 height: 46px;
@@ -392,37 +440,46 @@
                 font-size: 22px;
                 animation: ring 2.2s ease-in-out infinite;
             }
+
             @keyframes ring {
                 0%,
                 100% {
                     transform: rotate(0);
                 }
+
                 10% {
                     transform: rotate(-12deg);
                 }
+
                 20% {
                     transform: rotate(10deg);
                 }
+
                 30% {
                     transform: rotate(-8deg);
                 }
+
                 40% {
                     transform: rotate(4deg);
                 }
+
                 50% {
                     transform: rotate(0);
                 }
             }
+
             .alert-body h2 {
                 font-size: 15px;
                 font-weight: 700;
                 color: var(--storm-deep);
                 margin-bottom: 3px;
             }
+
             .alert-body p {
                 font-size: 14px;
                 color: var(--ink-soft);
             }
+
             .risk-tag {
                 margin-left: auto;
                 font-family: "IBM Plex Mono", monospace;
@@ -435,17 +492,20 @@
                 white-space: nowrap;
                 animation: tagPulse 1.8s ease-in-out infinite;
             }
+
             @keyframes tagPulse {
                 0%,
                 100% {
                     box-shadow: 0 0 0 0 rgba(227, 102, 26, 0.45);
                 }
+
                 50% {
                     box-shadow: 0 0 0 7px rgba(227, 102, 26, 0);
                 }
             }
 
             /* ============ Hourly timeline ============ */
+
             .section-label {
                 margin: 34px 0 14px;
                 font-size: 14px;
@@ -460,9 +520,11 @@
                 padding: 6px 2px 14px;
                 scroll-behavior: smooth;
             }
+
             .hourly-weather::-webkit-scrollbar {
                 height: 5px;
             }
+
             .hourly-weather::-webkit-scrollbar-thumb {
                 background: var(--sky-line);
                 border-radius: 10px;
@@ -481,38 +543,45 @@
                     transform 0.15s ease,
                     box-shadow 0.15s ease;
             }
+
             .hour:hover {
                 border-color: var(--sky-line);
                 transform: translateY(-4px);
                 box-shadow: 0 8px 18px rgba(10, 24, 48, 0.1);
             }
+
             .hour p {
                 font-family: "IBM Plex Mono", monospace;
                 font-size: 11px;
                 color: var(--ink-soft);
                 margin-bottom: 10px;
             }
+
             .hour .ic {
                 font-size: 24px;
                 display: block;
                 margin-bottom: 8px;
             }
+
             .hour h3 {
                 font-size: 16px;
                 font-weight: 600;
             }
+
             .hour.rainy {
                 background: rgba(62, 166, 255, 0.06);
                 border-color: rgba(62, 166, 255, 0.3);
             }
 
-            /* ============ Metric / generic cards ============ */
+            /* ============ Metric cards ============ */
+
             .cards {
                 margin-top: 6px;
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 14px;
             }
+
             .card {
                 background: var(--paper-card);
                 border: 1px solid var(--hairline);
@@ -522,49 +591,260 @@
                     transform 0.2s ease,
                     box-shadow 0.2s ease;
             }
+
             .card:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 12px 24px rgba(10, 24, 48, 0.1);
             }
+
             .card .ic {
                 font-size: 20px;
                 margin-bottom: 10px;
                 display: block;
             }
+
             .card .label {
                 font-size: 12px;
                 color: var(--ink-soft);
                 margin-bottom: 6px;
             }
+
             .card .value {
                 font-family: "Fraunces", serif;
                 font-size: 26px;
                 font-weight: 600;
             }
 
-            /* ============ Map ============ */
+            /* ============ WEATHER RISK MAP ============ */
+
             .map {
                 margin-top: 34px;
             }
+
             .map-frame {
                 margin-top: 14px;
                 border-radius: var(--radius-md);
                 overflow: hidden;
                 border: 1px solid var(--hairline);
+                position: relative;
+                background: #101820;
             }
-            .map-frame iframe {
-                display: block;
+
+            #mapFrame {
                 width: 100%;
-                height: 340px;
-                border: 0;
+                height: 430px;
+                position: relative;
+            }
+
+            #weatherRiskMap {
+                width: 100%;
+                height: 100%;
+            }
+
+            .map-loading {
+                position: absolute;
+                inset: 0;
+                z-index: 999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #101820;
+                color: rgba(255, 255, 255, 0.72);
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 13px;
+            }
+
+            .map-status {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                z-index: 500;
+                background: rgba(10, 24, 48, 0.88);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 9px;
+                padding: 7px 10px;
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 10px;
+                backdrop-filter: blur(8px);
+            }
+
+            .map-legend {
+                position: absolute;
+                bottom: 16px;
+                left: 16px;
+                z-index: 500;
+                background: rgba(10, 24, 48, 0.92);
+                color: #fff;
+                padding: 11px 13px;
+                border-radius: 11px;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+                font-size: 11px;
+                backdrop-filter: blur(8px);
+            }
+
+            .legend-title {
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                margin-bottom: 7px;
+                color: rgba(255, 255, 255, 0.65);
+                text-transform: uppercase;
+            }
+
+            .legend-row {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                margin: 4px 0;
+            }
+
+            .legend-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .legend-dot.normal {
+                background: #28b45a;
+            }
+
+            .legend-dot.watch {
+                background: #f0b41e;
+            }
+
+            .legend-dot.severe {
+                background: #dc2828;
+            }
+
+            .risk-marker {
+                border-radius: 50%;
+                border: 2px solid rgba(255, 255, 255, 0.9);
+                box-shadow:
+                    0 0 0 2px rgba(0, 0, 0, 0.22),
+                    0 5px 14px rgba(0, 0, 0, 0.35);
+            }
+
+            .current-location-marker {
+                width: 17px;
+                height: 17px;
+                border-radius: 50%;
+                background: #3ea6ff;
+                border: 3px solid white;
+                box-shadow:
+                    0 0 0 5px rgba(62, 166, 255, 0.25),
+                    0 0 18px rgba(62, 166, 255, 0.75);
+                animation: locationPulse 1.8s ease-out infinite;
+            }
+
+            @keyframes locationPulse {
+                0% {
+                    box-shadow:
+                        0 0 0 0 rgba(62, 166, 255, 0.55),
+                        0 0 18px rgba(62, 166, 255, 0.75);
+                }
+
+                70% {
+                    box-shadow:
+                        0 0 0 12px rgba(62, 166, 255, 0),
+                        0 0 24px rgba(62, 166, 255, 0.35);
+                }
+
+                100% {
+                    box-shadow:
+                        0 0 0 0 rgba(62, 166, 255, 0),
+                        0 0 18px rgba(62, 166, 255, 0.5);
+                }
+            }
+
+            .leaflet-popup-content-wrapper,
+            .leaflet-popup-tip {
+                background: #101a2e;
+                color: #eef1f8;
+            }
+
+            .leaflet-popup-content {
+                margin: 13px 15px;
+            }
+
+            .leaflet-popup-close-button {
+                color: rgba(255, 255, 255, 0.7) !important;
+            }
+
+            .weather-popup {
+                min-width: 210px;
+                font-family: "Inter", sans-serif;
+            }
+
+            .weather-popup h3 {
+                font-family: "Fraunces", serif;
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+
+            .weather-popup .popup-status {
+                display: inline-block;
+                font-family: "IBM Plex Mono", monospace;
+                font-size: 10px;
+                padding: 4px 8px;
+                border-radius: 20px;
+                margin: 5px 0 10px;
+                color: #fff;
+            }
+
+            .weather-popup .popup-risk {
+                font-family: "Fraunces", serif;
+                font-size: 28px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .weather-popup .popup-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 7px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                padding-top: 9px;
+            }
+
+            .weather-popup .popup-item {
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+            .weather-popup .popup-item strong {
+                display: block;
+                color: #fff;
+                font-size: 12px;
+                margin-top: 1px;
+            }
+
+            .leaflet-control-zoom a {
+                background: #101a2e !important;
+                color: #fff !important;
+                border-color: #33425d !important;
+            }
+
+            .leaflet-control-attribution {
+                background: rgba(10, 24, 48, 0.75) !important;
+                color: rgba(255, 255, 255, 0.65) !important;
+            }
+
+            .leaflet-control-attribution a {
+                color: #7bc5ff !important;
             }
 
             /* ============ Forecast day cards ============ */
+
             .forecast-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
                 gap: 14px;
             }
+
             .day-card {
                 background: var(--paper-card);
                 border: 1px solid var(--hairline);
@@ -575,38 +855,45 @@
                     transform 0.2s ease,
                     box-shadow 0.2s ease;
             }
+
             .day-card:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 12px 24px rgba(10, 24, 48, 0.1);
             }
+
             .day-card .dname {
                 font-family: "IBM Plex Mono", monospace;
                 font-size: 12px;
                 color: var(--ink-soft);
                 margin-bottom: 8px;
             }
+
             .day-card .ic {
                 font-size: 30px;
                 margin-bottom: 8px;
                 display: block;
             }
+
             .day-card .hi {
                 font-family: "Fraunces", serif;
                 font-weight: 600;
                 font-size: 20px;
             }
+
             .day-card .lo {
                 font-size: 13px;
                 color: var(--ink-soft);
                 margin-left: 6px;
             }
+
             .day-card .cond {
                 font-size: 11.5px;
                 color: var(--ink-soft);
                 margin-top: 6px;
             }
 
-            /* ============ History / custom date section ============ */
+            /* ============ History ============ */
+
             .history-form {
                 background: var(--paper-card);
                 border: 1px solid var(--hairline);
@@ -617,6 +904,7 @@
                 gap: 14px;
                 align-items: flex-end;
             }
+
             .field {
                 display: flex;
                 flex-direction: column;
@@ -624,11 +912,13 @@
                 flex: 1;
                 min-width: 160px;
             }
+
             .field label {
                 font-size: 12px;
                 font-weight: 600;
                 color: var(--ink-soft);
             }
+
             .field input {
                 padding: 11px 12px;
                 border-radius: var(--radius-sm);
@@ -638,10 +928,12 @@
                 background: var(--paper);
                 color: var(--ink);
             }
+
             .field input:focus {
                 outline: 2px solid var(--rain);
                 outline-offset: 1px;
             }
+
             .btn-primary {
                 padding: 11px 22px;
                 border: none;
@@ -659,10 +951,12 @@
                     transform 0.15s ease,
                     box-shadow 0.15s ease;
             }
+
             .btn-primary:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 8px 18px rgba(28, 58, 99, 0.3);
             }
+
             .btn-primary:active {
                 transform: translateY(0) scale(0.98);
             }
@@ -670,6 +964,7 @@
             .history-result {
                 margin-top: 22px;
             }
+
             .history-empty {
                 margin-top: 22px;
                 color: var(--ink-soft);
@@ -678,6 +973,7 @@
             }
 
             /* ============ Astronomy ============ */
+
             .astro-hero {
                 background: linear-gradient(
                     150deg,
@@ -692,6 +988,7 @@
                 position: relative;
                 overflow: hidden;
             }
+
             .astro-hero::before {
                 content: "";
                 position: absolute;
@@ -724,14 +1021,17 @@
                     );
                 animation: twinkle 3s ease-in-out infinite alternate;
             }
+
             @keyframes twinkle {
                 from {
                     opacity: 0.5;
                 }
+
                 to {
                     opacity: 1;
                 }
             }
+
             .moon-emoji {
                 font-size: 56px;
                 position: relative;
@@ -739,6 +1039,7 @@
                 display: inline-block;
                 animation: float 5s ease-in-out infinite;
             }
+
             .astro-hero h3 {
                 font-family: "Fraunces", serif;
                 font-size: 24px;
@@ -746,6 +1047,7 @@
                 position: relative;
                 z-index: 1;
             }
+
             .astro-hero p {
                 color: rgba(255, 255, 255, 0.7);
                 margin-top: 6px;
@@ -754,7 +1056,8 @@
                 font-size: 14px;
             }
 
-            /* ============ Seamless Floating Wave Footer ============ */
+            /* ============ Footer ============ */
+
             footer {
                 position: relative;
                 margin-top: 70px;
@@ -767,8 +1070,13 @@
                 text-align: center;
                 padding: 36px 20px 28px;
             }
+
             body.dark footer {
-                background: linear-gradient(180deg, #091322 0%, #03070f 100%);
+                background: linear-gradient(
+                    180deg,
+                    #091322 0%,
+                    #03070f 100%
+                );
             }
 
             .water-waves {
@@ -788,6 +1096,7 @@
                 width: 200%;
                 height: 100%;
             }
+
             .wave path {
                 fill-opacity: 1;
             }
@@ -795,6 +1104,7 @@
             .wave-back {
                 animation: waveFlow 16s linear infinite;
             }
+
             .wave-back path {
                 fill: rgba(62, 166, 255, 0.25);
             }
@@ -802,6 +1112,7 @@
             .wave-mid {
                 animation: waveFlow 11s linear infinite reverse;
             }
+
             .wave-mid path {
                 fill: rgba(62, 166, 255, 0.5);
             }
@@ -809,9 +1120,11 @@
             .wave-front {
                 animation: waveFlow 8s linear infinite;
             }
+
             .wave-front path {
                 fill: var(--sky-deep);
             }
+
             body.dark .wave-front path {
                 fill: #091322;
             }
@@ -820,6 +1133,7 @@
                 from {
                     transform: translateX(0);
                 }
+
                 to {
                     transform: translateX(-50%);
                 }
@@ -846,6 +1160,7 @@
                 color: #fff;
                 letter-spacing: 0.2px;
             }
+
             .footer-mark {
                 font-size: 22px;
                 animation: float 4s ease-in-out infinite;
@@ -899,6 +1214,7 @@
                 box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
                 transition: all 0.2s ease;
             }
+
             .name-chip:hover {
                 transform: translateY(-2px);
                 background: rgba(255, 255, 255, 0.18);
@@ -952,21 +1268,26 @@
             }
 
             /* ============ Dark mode ============ */
+
             body.dark {
                 background: #0c1424;
                 color: #eef1f8;
             }
+
             body.dark #navbar {
                 background: #101a2e;
                 border-color: #25324a;
             }
+
             body.dark .nav-item {
                 color: #8a96ae;
             }
+
             body.dark .nav-item:hover {
                 background: rgba(62, 166, 255, 0.1);
                 color: #eef1f8;
             }
+
             body.dark .card,
             body.dark .alert,
             body.dark .hour,
@@ -976,11 +1297,13 @@
                 border-color: #25324a;
                 color: #eef1f8;
             }
+
             body.dark .field input {
                 background: #0c1424;
                 border-color: #25324a;
                 color: #eef1f8;
             }
+
             body.dark .card .label,
             body.dark .hour p,
             body.dark .alert-body p,
@@ -989,35 +1312,52 @@
             body.dark .field label {
                 color: #8a96ae;
             }
+
             body.dark .section-label {
                 color: #8a96ae;
             }
+
             body.dark .map-frame {
                 border-color: #25324a;
             }
+
             body.dark .humidity-bar {
                 background: rgba(255, 255, 255, 0.08);
             }
+
             body.dark .history-empty {
                 color: #8a96ae;
             }
 
             /* ============ Responsive ============ */
+
             @media (max-width: 680px) {
                 .hero {
                     grid-template-columns: 1fr;
                 }
+
                 .hero-right {
                     border-left: none;
                     border-top: 1px solid rgba(255, 255, 255, 0.15);
                     padding-left: 0;
                     padding-top: 18px;
                 }
+
                 #navbar {
                     top: 70px;
                 }
+
                 footer {
                     padding-top: 30px;
+                }
+
+                #mapFrame {
+                    height: 380px;
+                }
+
+                .map-legend {
+                    bottom: 10px;
+                    left: 10px;
                 }
             }
         </style>
@@ -1027,20 +1367,19 @@
         <div class="page-main">
             <header>
                 <div class="brand">
-                    <div class="brand-mark"><img src="logo.jpeg"style="
-width:55px;
-height:55px;
-border-radius:50%;
-object-fit:cover;
-background:white;
-padding:3px;
-">
-</div>
+                    <div class="brand-mark">
+                        <img
+                            src="logo.jpeg"
+                            alt="WeatherGuard AI"
+                        />
+                    </div>
+
                     <div>
                         <h2>WeatherGuard AI</h2>
                         <span>REALTIME · INVERTIS UNIVERSITY</span>
                     </div>
                 </div>
+
                 <div class="header-right">
                     <button
                         id="themeBtn"
@@ -1060,6 +1399,7 @@ padding:3px;
                 >
                     Home
                 </div>
+
                 <div
                     class="nav-item"
                     data-target="current-section"
@@ -1067,6 +1407,7 @@ padding:3px;
                 >
                     Current Weather
                 </div>
+
                 <div
                     class="nav-item"
                     data-target="forecast-section"
@@ -1074,6 +1415,7 @@ padding:3px;
                 >
                     Weather Forecast
                 </div>
+
                 <div
                     class="nav-item"
                     data-target="history-section"
@@ -1081,6 +1423,7 @@ padding:3px;
                 >
                     Custom Last Date Weather
                 </div>
+
                 <div
                     class="nav-item"
                     data-target="astronomy-section"
@@ -1091,188 +1434,328 @@ padding:3px;
             </nav>
 
             <div class="container">
+
                 <!-- ============ HOME ============ -->
+
                 <section id="home-section" class="section active-section">
+
                     <div class="hero reveal-up" style="--i: 0">
                         <div>
                             <div class="hero-loc">
                                 📍 <span id="heroLoc">Locating…</span>
                             </div>
-                            <div class="hero-temp" id="heroTemp">--°</div>
+
+                            <div class="hero-temp" id="heroTemp">
+                                --°
+                            </div>
+
                             <p class="hero-desc" id="heroDesc">
                                 Fetching live conditions for your location…
                             </p>
                         </div>
+
                         <div class="hero-right">
-                            <div class="rain-eta" id="rainEta">🌧️ —</div>
+                            <div class="rain-eta" id="rainEta">
+                                🌧️ —
+                            </div>
+
                             <div class="rain-sub" id="rainSub">
                                 Waiting for live data…
                             </div>
-                            <div class="humidity-bar"><i id="humidityFill"></i></div>
+
+                            <div class="humidity-bar">
+                                <i id="humidityFill"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="alert reveal-up" style="--i: 1; display: none" id="alertBox">
-                        <div class="alert-icon">⚠️</div>
+                    <div
+                        class="alert reveal-up"
+                        style="--i: 1; display: none"
+                        id="alertBox"
+                    >
+                        <div class="alert-icon">
+                            ⚠️
+                        </div>
+
                         <div class="alert-body">
                             <h2 id="alertTitle"></h2>
                             <p id="alertBody"></p>
                         </div>
-                        <div class="risk-tag" id="riskTag"></div>
+
+                        <div
+                            class="risk-tag"
+                            id="riskTag"
+                        ></div>
                     </div>
 
                     <div class="section-label reveal-up" style="--i: 2">
                         Next 24 hours
                     </div>
-                    <div class="hourly-weather reveal-up" style="--i: 2" id="hourlyWeather">
-                        <p class="history-empty" style="padding: 0 4px;">Loading hourly forecast…</p>
+
+                    <div
+                        class="hourly-weather reveal-up"
+                        style="--i: 2"
+                        id="hourlyWeather"
+                    >
+                        <p
+                            class="history-empty"
+                            style="padding: 0 4px"
+                        >
+                            Loading hourly forecast…
+                        </p>
                     </div>
 
                     <div class="section-label reveal-up" style="--i: 3">
                         Live weather map
                     </div>
-                    <div class="map-frame reveal-up" style="--i: 3">
-                        <iframe
-                            id="mapFrame"
-                            src="https://www.google.com/maps?q=invertis+university,+Uttar+Pradesh&output=embed"
-                            loading="lazy"
-                            allowfullscreen
-                        ></iframe>
+
+                    <div
+                        class="map-frame reveal-up"
+                        style="--i: 3"
+                    >
+                        <div id="mapFrame">
+                            <div
+                                class="map-loading"
+                                id="mapLoading"
+                            >
+                                Loading WeatherGuard risk map…
+                            </div>
+                        </div>
                     </div>
+
                 </section>
 
                 <!-- ============ CURRENT WEATHER ============ -->
+
                 <section id="current-section" class="section">
+
                     <div class="section-label reveal-up" style="--i: 0">
                         Current conditions
                     </div>
+
                     <div class="cards">
+
                         <div class="card reveal-up" style="--i: 1">
                             <span class="ic">🌡️</span>
                             <div class="label">Temperature</div>
-                            <div class="value" id="curTemp">--°C</div>
+                            <div class="value" id="curTemp">
+                                --°C
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 2">
                             <span class="ic">🤗</span>
                             <div class="label">Feels like</div>
-                            <div class="value" id="curFeels">--°C</div>
+                            <div class="value" id="curFeels">
+                                --°C
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 3">
                             <span class="ic">💧</span>
                             <div class="label">Humidity</div>
-                            <div class="value" id="curHumidity">--%</div>
+                            <div class="value" id="curHumidity">
+                                --%
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 4">
                             <span class="ic">🌬️</span>
                             <div class="label">Wind</div>
-                            <div class="value" id="curWind">-- km/h</div>
+                            <div class="value" id="curWind">
+                                -- km/h
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 5">
                             <span class="ic">🧭</span>
                             <div class="label">Pressure</div>
-                            <div class="value" id="curPressure">-- hPa</div>
+                            <div class="value" id="curPressure">
+                                -- hPa
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 6">
                             <span class="ic">👁️</span>
                             <div class="label">Visibility</div>
-                            <div class="value" id="curVisibility">-- km</div>
+                            <div class="value" id="curVisibility">
+                                -- km
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 7">
                             <span class="ic">☀️</span>
                             <div class="label">UV Index</div>
-                            <div class="value" id="curUV">--</div>
+                            <div class="value" id="curUV">
+                                --
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 8">
                             <span class="ic">☁️</span>
                             <div class="label">Cloud cover</div>
-                            <div class="value" id="curCloud">--%</div>
+                            <div class="value" id="curCloud">
+                                --%
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 9">
                             <span class="ic">🌧️</span>
                             <div class="label">Rain</div>
-                            <div class="value" id="curRain">-- mm</div>
+                            <div class="value" id="curRain">
+                                -- mm
+                            </div>
                         </div>
+
                     </div>
                 </section>
 
                 <!-- ============ FORECAST ============ -->
+
                 <section id="forecast-section" class="section">
+
                     <div class="section-label reveal-up" style="--i: 0">
                         7-day forecast
                     </div>
-                    <div class="forecast-grid" id="forecastGrid">
-                        <p class="history-empty">Loading 7-day forecast…</p>
+
+                    <div
+                        class="forecast-grid"
+                        id="forecastGrid"
+                    >
+                        <p class="history-empty">
+                            Loading 7-day forecast…
+                        </p>
                     </div>
+
                 </section>
 
                 <!-- ============ CUSTOM LAST DATE WEATHER ============ -->
+
                 <section id="history-section" class="section">
+
                     <div class="section-label reveal-up" style="--i: 0">
                         Look up a past date
                     </div>
-                    <div class="history-form reveal-up" style="--i: 1">
+
+                    <div
+                        class="history-form reveal-up"
+                        style="--i: 1"
+                    >
                         <div class="field">
-                            <label for="histDate">Date</label>
-                            <input type="date" id="histDate" />
+                            <label for="histDate">
+                                Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="histDate"
+                            />
                         </div>
+
                         <div class="field">
-                            <label for="histCity">Location</label>
+                            <label for="histCity">
+                                Location
+                            </label>
+
                             <input
                                 type="text"
                                 id="histCity"
                                 placeholder="e.g. Bareilly, Lucknow, Delhi…"
                             />
                         </div>
-                        <button class="btn-primary" onclick="fetchHistory()">
+
+                        <button
+                            class="btn-primary"
+                            onclick="fetchHistory()"
+                        >
                             Get weather
                         </button>
                     </div>
+
                     <div id="historyOutput">
                         <p class="history-empty">
                             Pick a date above to see that day's recorded
                             conditions.
                         </p>
                     </div>
+
                 </section>
 
                 <!-- ============ ASTRONOMY ============ -->
+
                 <section id="astronomy-section" class="section">
-                    <div class="astro-hero reveal-up" style="--i: 0">
-                        <span class="moon-emoji" id="moonEmoji">🌙</span>
-                        <h3 id="moonPhaseTitle">Loading…</h3>
-                        <p id="moonRiseSet">Calculating today's moon phase…</p>
+
+                    <div
+                        class="astro-hero reveal-up"
+                        style="--i: 0"
+                    >
+                        <span
+                            class="moon-emoji"
+                            id="moonEmoji"
+                        >
+                            🌙
+                        </span>
+
+                        <h3 id="moonPhaseTitle">
+                            Loading…
+                        </h3>
+
+                        <p id="moonRiseSet">
+                            Calculating today's moon phase…
+                        </p>
                     </div>
+
                     <div class="section-label reveal-up" style="--i: 1">
                         Sun &amp; day length
                     </div>
+
                     <div class="cards">
+
                         <div class="card reveal-up" style="--i: 2">
                             <span class="ic">🌅</span>
                             <div class="label">Sunrise</div>
-                            <div class="value" id="sunriseVal">--:--</div>
+                            <div class="value" id="sunriseVal">
+                                --:--
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 3">
                             <span class="ic">🌇</span>
                             <div class="label">Sunset</div>
-                            <div class="value" id="sunsetVal">--:--</div>
+                            <div class="value" id="sunsetVal">
+                                --:--
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 4">
                             <span class="ic">⏱️</span>
                             <div class="label">Day length</div>
-                            <div class="value" id="daylenVal">--</div>
+                            <div class="value" id="daylenVal">
+                                --
+                            </div>
                         </div>
+
                         <div class="card reveal-up" style="--i: 5">
                             <span class="ic">🌙</span>
                             <div class="label">Moon phase</div>
-                            <div class="value" id="moonPhaseVal">--</div>
+                            <div class="value" id="moonPhaseVal">
+                                --
+                            </div>
                         </div>
+
                     </div>
                 </section>
+
             </div>
         </div>
 
+        <!-- ============ FOOTER ============ -->
+
         <footer>
+
             <div class="water-waves" aria-hidden="true">
+
                 <svg
                     class="wave wave-back"
                     viewBox="0 0 2400 60"
@@ -1282,6 +1765,7 @@ padding:3px;
                         d="M0,30 C150,10 450,10 600,30 C750,50 1050,50 1200,30 C1350,10 1650,10 1800,30 C1950,50 2250,50 2400,30 L2400,60 L0,60 Z"
                     ></path>
                 </svg>
+
                 <svg
                     class="wave wave-mid"
                     viewBox="0 0 2400 60"
@@ -1291,6 +1775,7 @@ padding:3px;
                         d="M0,24 C150,44 450,44 600,24 C750,4 1050,4 1200,24 C1350,44 1650,44 1800,24 C1950,4 2250,4 2400,24 L2400,60 L0,60 Z"
                     ></path>
                 </svg>
+
                 <svg
                     class="wave wave-front"
                     viewBox="0 0 2400 60"
@@ -1300,9 +1785,11 @@ padding:3px;
                         d="M0,36 C150,20 450,20 600,36 C750,52 1050,52 1200,36 C1350,20 1650,20 1800,36 C1950,52 2250,52 2400,36 L2400,60 L0,60 Z"
                     ></path>
                 </svg>
+
             </div>
 
             <div class="footer-inner">
+
                 <div class="footer-brand">
                     <span class="footer-mark">🌦️</span>
                     <span>WeatherGuard AI</span>
@@ -1311,35 +1798,56 @@ padding:3px;
                 <div class="footer-divider"></div>
 
                 <div class="footer-credit">
-                    <span class="credit-label"
-                        >Designed &amp; Developed By</span
-                    >
+
+                    <span class="credit-label">
+                        Designed &amp; Developed By
+                    </span>
+
                     <div class="names">
 
-    <div class="name-chip">
-        <span class="avatar-badge">TH</span>
-        <span class="name-text">Team HAVOC</span>
-    </div>
+                        <div class="name-chip">
+                            <span class="avatar-badge">
+                                TH
+                            </span>
+
+                            <span class="name-text">
+                                Team HAVOC
+                            </span>
+                        </div>
+
+                    </div>
 
                 </div>
 
                 <div class="footer-sub">
                     © 2026 WeatherGuard AI · Invertis University Hackathon
                 </div>
+
             </div>
+
         </footer>
 
+        <!-- Leaflet -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <!-- Existing site controls -->
         <script>
             function toggleTheme() {
                 document.body.classList.toggle("dark");
-                const btn = document.getElementById("themeBtn");
-                btn.innerHTML = document.body.classList.contains("dark")
-                    ? "☀️"
-                    : "🌙";
+
+                const btn =
+                    document.getElementById("themeBtn");
+
+                btn.innerHTML =
+                    document.body.classList.contains("dark")
+                        ? "☀️"
+                        : "🌙";
             }
 
             function playReveal(section) {
-                const items = section.querySelectorAll(".reveal-up");
+                const items =
+                    section.querySelectorAll(".reveal-up");
+
                 items.forEach((el) => {
                     el.style.animation = "none";
                     void el.offsetWidth;
@@ -1348,26 +1856,709 @@ padding:3px;
             }
 
             document.querySelectorAll(".nav-item").forEach((item) => {
+
                 item.addEventListener("click", () => {
+
                     document
                         .querySelectorAll(".nav-item")
-                        .forEach((n) => n.classList.remove("active-tab"));
+                        .forEach((n) =>
+                            n.classList.remove("active-tab")
+                        );
+
                     item.classList.add("active-tab");
 
-                    const targetId = item.getAttribute("data-target");
+                    const targetId =
+                        item.getAttribute("data-target");
+
                     document
                         .querySelectorAll(".section")
                         .forEach((sec) =>
-                            sec.classList.remove("active-section"),
+                            sec.classList.remove(
+                                "active-section"
+                            )
                         );
-                    const target = document.getElementById(targetId);
-                    target.classList.add("active-section");
-                    playReveal(target);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                });
-            });
 
+                    const target =
+                        document.getElementById(targetId);
+
+                    target.classList.add(
+                        "active-section"
+                    );
+
+                    playReveal(target);
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                    });
+
+                    /* Fix Leaflet sizing after switching tabs */
+                    if (
+                        targetId === "home-section" &&
+                        window.weatherRiskMap
+                    ) {
+                        setTimeout(() => {
+                            window.weatherRiskMap.invalidateSize();
+                        }, 250);
+                    }
+                });
+
+            });
         </script>
+
+        <!-- WeatherGuard risk map -->
+        <script>
+            const WEATHER_MAP_API =
+                "https://weather-alert-system-2.onrender.com/predict";
+
+            const OPEN_METEO_MAP_API =
+                "https://api.open-meteo.com/v1/forecast";
+
+            const RISK_GRID_POINTS = [
+                {
+                    name: "Bareilly Center",
+                    lat: 28.3670,
+                    lon: 79.4304,
+                },
+                {
+                    name: "North",
+                    lat: 28.4700,
+                    lon: 79.4304,
+                },
+                {
+                    name: "South",
+                    lat: 28.2640,
+                    lon: 79.4304,
+                },
+                {
+                    name: "East",
+                    lat: 28.3670,
+                    lon: 79.5600,
+                },
+                {
+                    name: "West",
+                    lat: 28.3670,
+                    lon: 79.3000,
+                },
+                {
+                    name: "Northeast",
+                    lat: 28.4600,
+                    lon: 79.5500,
+                },
+                {
+                    name: "Southwest",
+                    lat: 28.2700,
+                    lon: 79.3100,
+                },
+            ];
+
+            let weatherRiskMap = null;
+            let riskLayer = null;
+            let currentLocationMarker = null;
+
+            function getRiskValue(data) {
+
+                let value =
+                    data?.risk_score ??
+                    data?.risk ??
+                    data?.probability ??
+                    data?.prob ??
+                    data?.prediction_probability;
+
+                value = Number(value);
+
+                if (!Number.isFinite(value)) {
+                    return null;
+                }
+
+                if (value > 1) {
+                    value = value / 100;
+                }
+
+                return Math.max(0, Math.min(1, value));
+            }
+
+            function riskInfo(risk) {
+
+                if (risk === null) {
+                    return {
+                        label: "Unavailable",
+                        color: "#64748b",
+                    };
+                }
+
+                if (risk >= 0.5) {
+                    return {
+                        label: "Severe",
+                        color: "#dc2828",
+                    };
+                }
+
+                if (risk >= 0.25) {
+                    return {
+                        label: "Watch",
+                        color: "#f0b41e",
+                    };
+                }
+
+                return {
+                    label: "Normal",
+                    color: "#28b45a",
+                };
+            }
+
+            function createRiskMarker(point, risk, weather) {
+
+                const info = riskInfo(risk);
+
+                const radius =
+                    risk === null
+                        ? 8
+                        : 8 + risk * 18;
+
+                const marker =
+                    L.circleMarker(
+                        [point.lat, point.lon],
+                        {
+                            radius: radius,
+                            color: "#ffffff",
+                            weight: 2,
+                            opacity: 0.95,
+                            fillColor: info.color,
+                            fillOpacity: 0.82,
+                            className: "risk-marker",
+                        }
+                    );
+
+                const riskText =
+                    risk === null
+                        ? "Unavailable"
+                        : `${(risk * 100).toFixed(1)}%`;
+
+                const temp =
+                    weather?.temperature != null
+                        ? `${Number(weather.temperature).toFixed(1)} °C`
+                        : "—";
+
+                const humidity =
+                    weather?.humidity != null
+                        ? `${Number(weather.humidity).toFixed(0)}%`
+                        : "—";
+
+                const wind =
+                    weather?.wind != null
+                        ? `${Number(weather.wind).toFixed(1)} km/h`
+                        : "—";
+
+                const rain =
+                    weather?.rain != null
+                        ? `${Number(weather.rain).toFixed(1)} mm`
+                        : "—";
+
+                marker.bindTooltip(
+                    `<strong>${point.name}</strong><br>
+                     Risk: ${riskText}<br>
+                     Status: ${info.label}`,
+                    {
+                        direction: "top",
+                        offset: [0, -radius],
+                        opacity: 0.95,
+                    }
+                );
+
+                marker.bindPopup(`
+                    <div class="weather-popup">
+
+                        <h3>${point.name}</h3>
+
+                        <span
+                            class="popup-status"
+                            style="background:${info.color}"
+                        >
+                            ${info.label}
+                        </span>
+
+                        <div
+                            class="popup-risk"
+                            style="color:${info.color}"
+                        >
+                            ${riskText}
+                        </div>
+
+                        <div class="popup-grid">
+
+                            <div class="popup-item">
+                                Temperature
+                                <strong>${temp}</strong>
+                            </div>
+
+                            <div class="popup-item">
+                                Humidity
+                                <strong>${humidity}</strong>
+                            </div>
+
+                            <div class="popup-item">
+                                Wind
+                                <strong>${wind}</strong>
+                            </div>
+
+                            <div class="popup-item">
+                                Rainfall
+                                <strong>${rain}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+                `);
+
+                return marker;
+            }
+
+            async function fetchPointWeather(point) {
+
+                try {
+
+                    const url =
+                        `${OPEN_METEO_MAP_API}` +
+                        `?latitude=${point.lat}` +
+                        `&longitude=${point.lon}` +
+                        `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,rain` +
+                        `&timezone=auto`;
+
+                    const response =
+                        await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Open-Meteo request failed"
+                        );
+                    }
+
+                    const data =
+                        await response.json();
+
+                    return {
+                        temperature:
+                            data.current
+                                ?.temperature_2m,
+
+                        humidity:
+                            data.current
+                                ?.relative_humidity_2m,
+
+                        wind:
+                            data.current
+                                ?.wind_speed_10m,
+
+                        rain:
+                            data.current
+                                ?.rain,
+                    };
+
+                } catch (error) {
+
+                    console.warn(
+                        "Weather fetch failed:",
+                        point.name,
+                        error
+                    );
+
+                    return {};
+                }
+            }
+
+            async function fetchPointRisk(point) {
+
+                try {
+
+                    const url =
+                        `${WEATHER_MAP_API}` +
+                        `?lat=${point.lat}` +
+                        `&lon=${point.lon}` +
+                        `&point=${encodeURIComponent(point.name)}`;
+
+                    const response =
+                        await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Prediction API returned ${response.status}`
+                        );
+                    }
+
+                    return await response.json();
+
+                } catch (error) {
+
+                    console.warn(
+                        "Risk fetch failed:",
+                        point.name,
+                        error
+                    );
+
+                    return null;
+                }
+            }
+
+            async function loadRiskMap() {
+
+                if (!window.L) {
+                    console.error(
+                        "Leaflet failed to load."
+                    );
+                    return;
+                }
+
+                const mapContainer =
+                    document.getElementById(
+                        "mapFrame"
+                    );
+
+                if (!mapContainer) {
+                    return;
+                }
+
+                if (!weatherRiskMap) {
+
+                    mapContainer.innerHTML = `
+                        <div id="weatherRiskMap"></div>
+
+                        <div
+                            class="map-status"
+                            id="mapStatus"
+                        >
+                            ● LIVE AI RISK
+                        </div>
+
+                        <div class="map-legend">
+
+                            <div class="legend-title">
+                                Rainfall Risk
+                            </div>
+
+                            <div class="legend-row">
+                                <span class="legend-dot normal"></span>
+                                Normal &lt;25%
+                            </div>
+
+                            <div class="legend-row">
+                                <span class="legend-dot watch"></span>
+                                Watch 25–49%
+                            </div>
+
+                            <div class="legend-row">
+                                <span class="legend-dot severe"></span>
+                                Severe ≥50%
+                            </div>
+
+                        </div>
+                    `;
+
+                    weatherRiskMap =
+                        L.map("weatherRiskMap", {
+                            zoomControl: true,
+                            attributionControl: true,
+                        }).setView(
+                            [28.3670, 79.4304],
+                            9.3
+                        );
+
+                    window.weatherRiskMap =
+                        weatherRiskMap;
+
+                    L.tileLayer(
+                        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                        {
+                            maxZoom: 19,
+                            attribution:
+                                '&copy; OpenStreetMap &copy; CARTO',
+                        }
+                    ).addTo(weatherRiskMap);
+
+                    riskLayer =
+                        L.layerGroup().addTo(
+                            weatherRiskMap
+                        );
+                }
+
+                if (riskLayer) {
+                    riskLayer.clearLayers();
+                }
+
+                const status =
+                    document.getElementById(
+                        "mapStatus"
+                    );
+
+                if (status) {
+                    status.textContent =
+                        "● UPDATING AI RISK…";
+                }
+
+                const results =
+                    await Promise.all(
+                        RISK_GRID_POINTS.map(
+                            async (point) => {
+
+                                const [
+                                    riskData,
+                                    weather,
+                                ] =
+                                    await Promise.all([
+                                        fetchPointRisk(
+                                            point
+                                        ),
+                                        fetchPointWeather(
+                                            point
+                                        ),
+                                    ]);
+
+                                return {
+                                    point,
+                                    risk:
+                                        getRiskValue(
+                                            riskData
+                                        ),
+                                    weather,
+                                };
+                            }
+                        )
+                    );
+
+                results.forEach(
+                    ({
+                        point,
+                        risk,
+                        weather,
+                    }) => {
+
+                        const marker =
+                            createRiskMarker(
+                                point,
+                                risk,
+                                weather
+                            );
+
+                        riskLayer.addLayer(
+                            marker
+                        );
+                    }
+                );
+
+                if (status) {
+                    status.textContent =
+                        `● LIVE AI RISK · ${results.length} POINTS`;
+                }
+
+                setTimeout(() => {
+
+                    if (weatherRiskMap) {
+                        weatherRiskMap.invalidateSize();
+                    }
+
+                }, 300);
+            }
+
+            function addCurrentLocation() {
+
+                if (
+                    !navigator.geolocation ||
+                    !weatherRiskMap
+                ) {
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+
+                    async (position) => {
+
+                        const lat =
+                            position.coords.latitude;
+
+                        const lon =
+                            position.coords.longitude;
+
+                        const icon =
+                            L.divIcon({
+                                className: "",
+                                html:
+                                    '<div class="current-location-marker"></div>',
+                                iconSize: [17, 17],
+                                iconAnchor: [8.5, 8.5],
+                                popupAnchor: [0, -10],
+                            });
+
+                        if (
+                            currentLocationMarker
+                        ) {
+                            weatherRiskMap.removeLayer(
+                                currentLocationMarker
+                            );
+                        }
+
+                        currentLocationMarker =
+                            L.marker(
+                                [lat, lon],
+                                {
+                                    icon: icon,
+                                    zIndexOffset: 1000,
+                                }
+                            ).addTo(
+                                weatherRiskMap
+                            );
+
+                        let weatherText =
+                            "Weather data unavailable";
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    `${OPEN_METEO_MAP_API}` +
+                                    `?latitude=${lat}` +
+                                    `&longitude=${lon}` +
+                                    `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,rain` +
+                                    `&timezone=auto`
+                                );
+
+                            const data =
+                                await response.json();
+
+                            const current =
+                                data.current || {};
+
+                            weatherText = `
+                                <div class="popup-grid">
+
+                                    <div class="popup-item">
+                                        Temperature
+                                        <strong>
+                                            ${
+                                                current.temperature_2m ??
+                                                "—"
+                                            } °C
+                                        </strong>
+                                    </div>
+
+                                    <div class="popup-item">
+                                        Humidity
+                                        <strong>
+                                            ${
+                                                current.relative_humidity_2m ??
+                                                "—"
+                                            }%
+                                        </strong>
+                                    </div>
+
+                                    <div class="popup-item">
+                                        Wind
+                                        <strong>
+                                            ${
+                                                current.wind_speed_10m ??
+                                                "—"
+                                            } km/h
+                                        </strong>
+                                    </div>
+
+                                    <div class="popup-item">
+                                        Rain
+                                        <strong>
+                                            ${
+                                                current.rain ??
+                                                "—"
+                                            } mm
+                                        </strong>
+                                    </div>
+
+                                </div>
+                            `;
+
+                        } catch (error) {
+                            console.warn(
+                                "Current location weather failed:",
+                                error
+                            );
+                        }
+
+                        currentLocationMarker.bindPopup(`
+                            <div class="weather-popup">
+
+                                <h3>
+                                    📍 Your Location
+                                </h3>
+
+                                <div
+                                    style="
+                                        font-family:'IBM Plex Mono',monospace;
+                                        font-size:10px;
+                                        color:rgba(255,255,255,.55);
+                                        margin:5px 0 10px;
+                                    "
+                                >
+                                    ${lat.toFixed(5)},
+                                    ${lon.toFixed(5)}
+                                </div>
+
+                                ${weatherText}
+
+                            </div>
+                        `);
+
+                        currentLocationMarker.bindTooltip(
+                            "Your current location",
+                            {
+                                direction: "top",
+                            }
+                        );
+                    },
+
+                    (error) => {
+
+                        console.warn(
+                            "Location permission unavailable:",
+                            error.message
+                        );
+
+                    },
+
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000,
+                    }
+                );
+            }
+
+            async function initWeatherRiskMap() {
+
+                await loadRiskMap();
+
+                addCurrentLocation();
+
+                /* Refresh every 10 minutes */
+                setInterval(
+                    loadRiskMap,
+                    10 * 60 * 1000
+                );
+            }
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                () => {
+
+                    setTimeout(
+                        initWeatherRiskMap,
+                        150
+                    );
+
+                }
+            );
+        </script>
+
+        <!-- Existing WeatherGuard application logic -->
         <script src="script.js"></script>
+
     </body>
 </html>
+```
