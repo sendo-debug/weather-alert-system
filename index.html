@@ -1892,7 +1892,6 @@
                         behavior: "smooth",
                     });
 
-                    /* Fix Leaflet sizing after switching tabs */
                     if (
                         targetId === "home-section" &&
                         window.weatherRiskMap
@@ -2267,12 +2266,18 @@
                     window.weatherRiskMap =
                         weatherRiskMap;
 
+                    /*
+                     * OpenStreetMap basemap.
+                     * No CARTO and no API key.
+                     */
                     L.tileLayer(
-                        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                         {
                             maxZoom: 19,
                             attribution:
-                                '&copy; OpenStreetMap &copy; CARTO',
+                                '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+                            referrerPolicy:
+                                "strict-origin-when-cross-origin",
                         }
                     ).addTo(weatherRiskMap);
 
