@@ -322,33 +322,33 @@ public class WeatherServer {
      */
 
     private static void sendResponse(
-            HttpExchange exchange,
-            String response
-    ) throws IOException {
+        HttpExchange exchange,
+        String response
+) throws IOException {
 
+    exchange.getResponseHeaders()
+            .set(
+                    "Content-Type",
+                    "application/json"
+            );
 
-        exchange.getResponseHeaders()
-                .set(
-                        "Content-Type",
-                        "application/json"
-                );
+    exchange.getResponseHeaders()
+            .set(
+                    "Access-Control-Allow-Origin",
+                    "*"
+            );
 
+    exchange.sendResponseHeaders(
+            200,
+            response.getBytes().length
+    );
 
-        exchange.sendResponseHeaders(
-                200,
-                response.getBytes().length
-        );
+    OutputStream os =
+            exchange.getResponseBody();
 
+    os.write(
+            response.getBytes()
+    );
 
-        OutputStream os =
-                exchange.getResponseBody();
-
-
-        os.write(
-                response.getBytes()
-        );
-
-
-        os.close();
-    }
+    os.close();
 }
