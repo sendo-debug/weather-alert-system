@@ -503,6 +503,59 @@
                 }
             }
 
+            /* ---- Alert tone variants (low / moderate / high) ----
+               Added so the rain-risk banner (#alertBox) can stay
+               visible at all times and simply change color/copy
+               based on data-tone, instead of being hidden when
+               there is no rain risk. Default (no data-tone, or
+               data-tone="high") keeps the original storm/orange
+               look above. */
+
+            .alert[data-tone="low"] {
+                border-left-color: #28b45a;
+            }
+
+            .alert[data-tone="low"] .alert-icon {
+                background: rgba(40, 180, 90, 0.12);
+                color: #1f8a44;
+                animation: none;
+            }
+
+            .alert[data-tone="low"] .alert-body h2 {
+                color: #1f8a44;
+            }
+
+            .alert[data-tone="low"] .risk-tag {
+                background: #28b45a;
+                animation: none;
+                box-shadow: none;
+            }
+
+            .alert[data-tone="moderate"] {
+                border-left-color: #f0b41e;
+            }
+
+            .alert[data-tone="moderate"] .alert-icon {
+                background: rgba(240, 180, 30, 0.15);
+                color: #a3780c;
+            }
+
+            .alert[data-tone="moderate"] .alert-body h2 {
+                color: #a3780c;
+            }
+
+            .alert[data-tone="moderate"] .risk-tag {
+                background: #f0b41e;
+            }
+
+            body.dark .alert[data-tone="low"] {
+                background: #141d30;
+            }
+
+            body.dark .alert[data-tone="moderate"] {
+                background: #141d30;
+            }
+
             /* ============ Hourly timeline ============ */
 
             .section-label {
@@ -2171,8 +2224,7 @@
                 try {
 
                     const url =
-                        `${WEATHER_MAP_API}` +
-                        `?lat=${point.lat}` +
+                        `${WEATHER_MAP_API}?lat=${point.lat}` +
                         `&lon=${point.lon}` +
                         `&point=${encodeURIComponent(point.name)}`;
 
