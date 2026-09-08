@@ -60,6 +60,13 @@ public class PredictionService {
                     + "\"wind_change_3h\":" + extractField(formattedWeatherJson, "wind_change_3h")
                     + "}";
 
+            System.out.println(
+                    "[AI] Calling prediction model at "
+                    + PREDICTION_API_URL
+                    + " with body: "
+                    + requestBody
+            );
+
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -71,9 +78,20 @@ public class PredictionService {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println(
+                    "[AI] Response status: "
+                    + response.statusCode()
+                    + " body: "
+                    + response.body()
+            );
+
             return response.body();
 
         } catch (Exception e) {
+
+            System.out.println(
+                    "[AI] Call failed: " + e.getMessage()
+            );
 
             return "{\"error\":\"" + e.getMessage() + "\"}";
         }
