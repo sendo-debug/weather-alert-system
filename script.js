@@ -6,11 +6,11 @@
    - Hourly / daily forecast: Open-Meteo
    - Historical weather: Open-Meteo archive
    - AI risk map: 7-point Bareilly grid
-   - AI risk popup: uses backend risk_score + label
+   - AI popup: backend /predict risk_score + label
    ============================================================ */
 
 /*
-   Guard against this file being included/executed twice.
+   Prevent duplicate execution.
 */
 if (window.__weatherguardScriptLoaded) {
 
@@ -48,7 +48,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           BAREILLY AI RISK MAP
+           BAREILLY AI RISK GRID
            ============================================================ */
 
         const RISK_GRID_POINTS = {
@@ -105,7 +105,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           SMALL HELPERS
+           HELPERS
            ============================================================ */
 
         function setText(id, value) {
@@ -123,18 +123,21 @@ if (window.__weatherguardScriptLoaded) {
         }
 
 
-        function round(n, decimals = 0) {
+        function round(value, decimals = 0) {
 
             if (
-                typeof n !== "number" ||
-                Number.isNaN(n)
+                typeof value !== "number" ||
+                Number.isNaN(value)
             ) {
                 return undefined;
             }
 
-            const factor = Math.pow(10, decimals);
+            const factor =
+                Math.pow(10, decimals);
 
-            return Math.round(n * factor) / factor;
+            return Math.round(
+                value * factor
+            ) / factor;
 
         }
 
@@ -161,7 +164,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           LEAFLET MAP LOADER
+           LEAFLET LOADER
            ============================================================ */
 
         function loadLeaflet() {
@@ -175,17 +178,16 @@ if (window.__weatherguardScriptLoaded) {
 
 
                 if (
-                    !document.getElementById("leaflet-css")
+                    !document.getElementById(
+                        "leaflet-css"
+                    )
                 ) {
 
                     const css =
                         document.createElement("link");
 
-                    css.id =
-                        "leaflet-css";
-
-                    css.rel =
-                        "stylesheet";
+                    css.id = "leaflet-css";
+                    css.rel = "stylesheet";
 
                     css.href =
                         "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -196,19 +198,27 @@ if (window.__weatherguardScriptLoaded) {
 
 
                 const existingScript =
-                    document.getElementById("leaflet-js");
+                    document.getElementById(
+                        "leaflet-js"
+                    );
 
 
                 if (existingScript) {
 
                     existingScript.addEventListener(
                         "load",
-                        resolve
+                        resolve,
+                        { once: true }
                     );
 
                     existingScript.addEventListener(
                         "error",
-                        reject
+                        () => reject(
+                            new Error(
+                                "Leaflet failed to load"
+                            )
+                        ),
+                        { once: true }
                     );
 
                     return;
@@ -228,15 +238,16 @@ if (window.__weatherguardScriptLoaded) {
                 script.onload =
                     resolve;
 
-                script.onerror = () => {
+                script.onerror =
+                    () => {
 
-                    reject(
-                        new Error(
-                            "Leaflet failed to load"
-                        )
-                    );
+                        reject(
+                            new Error(
+                                "Leaflet failed to load"
+                            )
+                        );
 
-                };
+                    };
 
                 document.head.appendChild(script);
 
@@ -247,6 +258,11 @@ if (window.__weatherguardScriptLoaded) {
 
         /* ============================================================
            MAP STYLES
+
+           IMPORTANT:
+           CSS lives inside a template literal.
+           This prevents "#mapFrame" from being interpreted
+           as a JavaScript private field.
            ============================================================ */
 
         function injectRiskMapStyles() {
@@ -399,7 +415,9 @@ if (window.__weatherguardScriptLoaded) {
         function prepareRiskMapContainer() {
 
             let map =
-                document.getElementById("mapFrame");
+                document.getElementById(
+                    "mapFrame"
+                );
 
 
             if (!map) {
@@ -408,7 +426,8 @@ if (window.__weatherguardScriptLoaded) {
 
 
             if (
-                map.tagName.toLowerCase() === "iframe"
+                map.tagName.toLowerCase() ===
+                "iframe"
             ) {
 
                 const replacement =
@@ -441,7 +460,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           RISK LOGIC
+           RISK NORMALIZATION
            ============================================================ */
 
         function normalizeRiskScore(value) {
@@ -458,8 +477,8 @@ if (window.__weatherguardScriptLoaded) {
             /*
                Supports both:
 
-               0.32 -> 32%
-               32   -> 32%
+               0.18 -> 18%
+               18   -> 18%
             */
 
             if (score > 1) {
@@ -469,19 +488,27 @@ if (window.__weatherguardScriptLoaded) {
 
             return Math.max(
                 0,
-                Math.min(1, score)
+                Math.min(
+                    1,
+                    score
+                )
             );
 
         }
 
 
-        function normalizeRiskLabel(label, score) {
+        function normalizeRiskLabel(
+            label,
+            score
+        ) {
 
             const normalized =
                 String(label || "")
                     .trim()
                     .toLowerCase();
 
+
+            /* AI says NORMAL */
 
             if (
                 normalized === "normal" ||
@@ -492,6 +519,8 @@ if (window.__weatherguardScriptLoaded) {
             }
 
 
+            /* AI says WATCH */
+
             if (
                 normalized === "watch" ||
                 normalized === "moderate"
@@ -500,6 +529,8 @@ if (window.__weatherguardScriptLoaded) {
             }
 
 
+            /* AI says WARNING */
+
             if (
                 normalized === "warning" ||
                 normalized === "high"
@@ -507,6 +538,8 @@ if (window.__weatherguardScriptLoaded) {
                 return "WARNING";
             }
 
+
+            /* AI says SEVERE */
 
             if (
                 normalized === "severe" ||
@@ -517,8 +550,8 @@ if (window.__weatherguardScriptLoaded) {
 
 
             /*
-               If backend didn't send a label,
-               calculate it from the score.
+               No label from backend:
+               determine it from score.
             */
 
             if (score >= 0.50) {
@@ -536,24 +569,9 @@ if (window.__weatherguardScriptLoaded) {
         }
 
 
-        function getRiskColor(risk) {
-
-            if (risk >= 0.50) {
-                return "#dc2828";
-            }
-
-
-            if (risk >= 0.25) {
-                return "#f0b41e";
-            }
-
-
-            return "#28b45a";
-
-        }
-
-
-        function getRiskColorFromLabel(label) {
+        function getRiskColorFromLabel(
+            label
+        ) {
 
             switch (label) {
 
@@ -573,6 +591,23 @@ if (window.__weatherguardScriptLoaded) {
                     return "#28b45a";
 
             }
+
+        }
+
+
+        function getRiskStatus(
+            risk
+        ) {
+
+            if (risk >= 0.50) {
+                return "SEVERE";
+            }
+
+            if (risk >= 0.25) {
+                return "WATCH";
+            }
+
+            return "NORMAL";
 
         }
 
@@ -656,13 +691,15 @@ if (window.__weatherguardScriptLoaded) {
                 };
 
 
-            legend.addTo(riskMap);
+            legend.addTo(
+                riskMap
+            );
 
         }
 
 
         /* ============================================================
-           FETCH AI + WEATHER FOR ONE MAP POINT
+           GET ONE AI MAP POINT
            ============================================================ */
 
         async function getRiskPointData(
@@ -671,11 +708,13 @@ if (window.__weatherguardScriptLoaded) {
         ) {
 
             const predictUrl =
+
                 `${AI_PREDICT_API}?lat=${point.lat}&lon=${point.lon}` +
                 `&point=${encodeURIComponent(key)}`;
 
 
             const weatherUrl =
+
                 `${OPEN_METEO_FORECAST}?latitude=${point.lat}` +
                 `&longitude=${point.lon}` +
                 `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,rain` +
@@ -687,9 +726,13 @@ if (window.__weatherguardScriptLoaded) {
                 weatherRes
             ] = await Promise.all([
 
-                fetch(predictUrl),
+                fetch(
+                    predictUrl
+                ),
 
-                fetch(weatherUrl)
+                fetch(
+                    weatherUrl
+                )
 
             ]);
 
@@ -739,9 +782,16 @@ if (window.__weatherguardScriptLoaded) {
                 weather.current || {};
 
 
-            /* --------------------------------------------------------
-               READ RISK SCORE
-               -------------------------------------------------------- */
+            /*
+               Get score.
+
+               Preferred:
+               risk_score
+
+               Fallbacks are included so a slightly
+               different backend response doesn't break
+               the popup.
+            */
 
             const rawRisk =
 
@@ -760,59 +810,56 @@ if (window.__weatherguardScriptLoaded) {
                 );
 
 
-            /* --------------------------------------------------------
-               READ AI LABEL
-               -------------------------------------------------------- */
+            /*
+               IMPORTANT:
+               Keep the backend AI label.
+            */
 
             const label =
+
                 normalizeRiskLabel(
+
                     prediction.label ??
+
                     prediction.status ??
+
                     prediction.risk_label,
+
                     risk
+
                 );
 
 
             return {
 
                 key:
-
                     key,
 
                 name:
-
                     point.name,
 
                 lat:
-
                     point.lat,
 
                 lon:
-
                     point.lon,
 
                 risk:
-
                     risk,
 
                 label:
-
                     label,
 
                 temperature:
-
                     current.temperature_2m,
 
                 humidity:
-
                     current.relative_humidity_2m,
 
                 wind:
-
                     current.wind_speed_10m,
 
                 rain:
-
                     current.rain ?? 0
 
             };
@@ -821,18 +868,17 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           RENDER MAP MARKER + AI POPUP
+           RENDER AI RISK MARKER
+
+           THIS IS THE IMPORTANT PART FOR THE POPUP.
            ============================================================ */
 
-        function renderRiskMarker(data) {
+        function renderRiskMarker(
+            data
+        ) {
 
             /*
-               Use BOTH:
-
-               data.risk
-               data.label
-
-               so popup represents the actual AI output.
+               Normalize score one more time.
             */
 
             const risk =
@@ -840,6 +886,11 @@ if (window.__weatherguardScriptLoaded) {
                     data.risk
                 );
 
+
+            /*
+               IMPORTANT:
+               Use AI label instead of ignoring it.
+            */
 
             const status =
                 normalizeRiskLabel(
@@ -855,11 +906,6 @@ if (window.__weatherguardScriptLoaded) {
                 );
 
 
-            /*
-               Color is based on the normalized AI
-               assessment.
-            */
-
             const color =
                 getRiskColorFromLabel(
                     status
@@ -870,9 +916,9 @@ if (window.__weatherguardScriptLoaded) {
                 8 + risk * 16;
 
 
-            /* --------------------------------------------------------
-               CREATE MARKER
-               -------------------------------------------------------- */
+            /* ========================================================
+               MARKER
+               ======================================================== */
 
             const marker =
                 L.circleMarker(
@@ -885,27 +931,21 @@ if (window.__weatherguardScriptLoaded) {
                     {
 
                         radius:
-
                             radius,
 
                         color:
-
                             "#ffffff",
 
                         weight:
-
                             2,
 
                         opacity:
-
                             1,
 
                         fillColor:
-
                             color,
 
                         fillOpacity:
-
                             0.88
 
                     }
@@ -913,9 +953,9 @@ if (window.__weatherguardScriptLoaded) {
                 );
 
 
-            /* --------------------------------------------------------
+            /* ========================================================
                WEATHER VALUES
-               -------------------------------------------------------- */
+               ======================================================== */
 
             const temperature =
 
@@ -1036,9 +1076,7 @@ if (window.__weatherguardScriptLoaded) {
                     <div class="risk-map-popup">
 
                         <div class="risk-map-popup-title">
-
                             ${data.name}
-
                         </div>
 
 
@@ -1136,7 +1174,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           MAP LOADING
+           MAP LOADING UI
            ============================================================ */
 
         function setRiskMapLoading(
@@ -1227,9 +1265,7 @@ if (window.__weatherguardScriptLoaded) {
             );
 
 
-            /* --------------------------------------------------------
-               Remove previous markers
-               -------------------------------------------------------- */
+            /* Remove old markers */
 
             riskMarkers.forEach(
                 (marker) => {
@@ -1251,9 +1287,7 @@ if (window.__weatherguardScriptLoaded) {
                 );
 
 
-            /* --------------------------------------------------------
-               Fetch all 7 points
-               -------------------------------------------------------- */
+            /* Fetch all points */
 
             const results =
                 await Promise.allSettled(
@@ -1265,7 +1299,6 @@ if (window.__weatherguardScriptLoaded) {
                                 key,
                                 point
                             )
-
                     )
 
                 );
@@ -1284,7 +1317,7 @@ if (window.__weatherguardScriptLoaded) {
                     ) {
 
                         console.log(
-                            "Rendering risk point:",
+                            "Rendering AI risk point:",
                             result.value
                         );
 
@@ -1379,13 +1412,11 @@ if (window.__weatherguardScriptLoaded) {
                         container,
 
                         {
-
                             zoomControl:
                                 true,
 
                             attributionControl:
                                 true
-
                         }
 
                     ).setView(
@@ -1438,6 +1469,10 @@ if (window.__weatherguardScriptLoaded) {
                 }
 
 
+                /*
+                   Refresh AI risk every 10 minutes.
+                */
+
                 riskRefreshTimer =
                     setInterval(
 
@@ -1449,7 +1484,6 @@ if (window.__weatherguardScriptLoaded) {
 
 
                 setTimeout(
-
                     () => {
 
                         if (riskMap) {
@@ -1459,9 +1493,7 @@ if (window.__weatherguardScriptLoaded) {
                         }
 
                     },
-
                     300
-
                 );
 
 
@@ -1557,7 +1589,9 @@ if (window.__weatherguardScriptLoaded) {
         }
 
 
-        function formatHour(dateObj) {
+        function formatHour(
+            dateObj
+        ) {
 
             return dateObj
                 .toLocaleTimeString(
@@ -1616,11 +1650,11 @@ if (window.__weatherguardScriptLoaded) {
 
                 );
 
-            } catch (err) {
+            } catch (error) {
 
                 console.warn(
-                    "Reverse geocoding failed, falling back to coords:",
-                    err
+                    "Reverse geocoding failed:",
+                    error
                 );
 
 
@@ -1740,9 +1774,7 @@ if (window.__weatherguardScriptLoaded) {
                 current.rain || 0;
 
 
-            if (
-                temp !== undefined
-            ) {
+            if (temp !== undefined) {
 
                 setText(
                     "heroTemp",
@@ -1823,9 +1855,7 @@ if (window.__weatherguardScriptLoaded) {
             );
 
 
-            if (
-                humidity !== undefined
-            ) {
+            if (humidity !== undefined) {
 
                 const fill =
                     document.getElementById(
@@ -1892,13 +1922,6 @@ if (window.__weatherguardScriptLoaded) {
                 }
 
 
-                data.__lat =
-                    lat;
-
-                data.__lon =
-                    lon;
-
-
                 populateCurrentWeather(
                     data,
                     placeName
@@ -1924,7 +1947,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           MAIN DASHBOARD AI PREDICTION
+           DASHBOARD AI PREDICTION
            ============================================================ */
 
         function slugifyPoint(
@@ -1972,94 +1995,54 @@ if (window.__weatherguardScriptLoaded) {
             switch (normalized) {
 
                 case "normal":
-
                 case "low":
-
                 case "safe":
 
                     return {
-
-                        icon:
-                            "✅",
-
-                        tag:
-                            "NORMAL",
-
-                        tone:
-                            "low"
-
+                        icon: "✅",
+                        tag: "NORMAL",
+                        tone: "low"
                     };
 
 
                 case "watch":
-
                 case "moderate":
 
                     return {
-
-                        icon:
-                            "👀",
-
-                        tag:
-                            "WATCH",
-
-                        tone:
-                            "moderate"
-
+                        icon: "👀",
+                        tag: "WATCH",
+                        tone: "moderate"
                     };
 
 
                 case "warning":
-
                 case "high":
 
                     return {
-
-                        icon:
-                            "⚠️",
-
-                        tag:
-                            "WARNING",
-
-                        tone:
-                            "high"
-
+                        icon: "⚠️",
+                        tag: "WARNING",
+                        tone: "high"
                     };
 
 
                 case "severe":
-
                 case "danger":
 
                     return {
-
-                        icon:
-                            "🚨",
-
-                        tag:
-                            "SEVERE",
-
-                        tone:
-                            "high"
-
+                        icon: "🚨",
+                        tag: "SEVERE",
+                        tone: "high"
                     };
 
 
                 default:
 
                     return {
-
-                        icon:
-                            "🤖",
-
-                        tag:
-                            normalized
-                                ? normalized.toUpperCase()
-                                : "NORMAL",
-
-                        tone:
-                            "low"
-
+                        icon: "🤖",
+                        tag: normalized
+                            ? normalized.toUpperCase()
+                            : "NORMAL",
+                        tone: "low"
                     };
 
             }
@@ -2110,13 +2093,7 @@ if (window.__weatherguardScriptLoaded) {
 
                 data.risk_label ||
 
-                (
-                    risk >= 0.50
-                        ? "SEVERE"
-                        : risk >= 0.25
-                            ? "WATCH"
-                            : "NORMAL"
-                );
+                getRiskStatus(risk);
 
 
             const presentation =
@@ -2214,8 +2191,12 @@ if (window.__weatherguardScriptLoaded) {
 
 
                 const url =
+
                     `${AI_PREDICT_API}?lat=${lat}&lon=${lon}` +
-                    `&point=${encodeURIComponent(point)}`;
+
+                    `&point=${encodeURIComponent(
+                        point
+                    )}`;
 
 
                 const res =
@@ -2289,9 +2270,13 @@ if (window.__weatherguardScriptLoaded) {
             try {
 
                 const url =
+
                     `${OPEN_METEO_FORECAST}?latitude=${lat}&longitude=${lon}` +
+
                     `&hourly=temperature_2m,precipitation_probability,weathercode,cloud_cover` +
+
                     `&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset` +
+
                     `&timezone=auto&forecast_days=7`;
 
 
@@ -2314,24 +2299,13 @@ if (window.__weatherguardScriptLoaded) {
                     await res.json();
 
 
-                populateHourly(
-                    data
-                );
+                populateHourly(data);
 
+                populateDaily(data);
 
-                populateDaily(
-                    data
-                );
+                populateAlertAndCloud(data);
 
-
-                populateAlertAndCloud(
-                    data
-                );
-
-
-                populateAstronomy(
-                    data
-                );
+                populateAstronomy(data);
 
 
             } catch (error) {
@@ -2469,13 +2443,17 @@ if (window.__weatherguardScriptLoaded) {
 
 
                             const isRainy =
+
                                 weathercode[idx] >= 51 &&
                                 weathercode[idx] < 90;
 
 
                             const label =
+
                                 i === 0
+
                                     ? "Now"
+
                                     : formatHour(
                                         new Date(t)
                                     );
@@ -2555,8 +2533,11 @@ if (window.__weatherguardScriptLoaded) {
 
 
                             const dname =
+
                                 i === 0
+
                                     ? "TODAY"
+
                                     : new Date(t)
                                         .toLocaleDateString(
                                             undefined,
@@ -2623,7 +2604,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           ALERT + CLOUD
+           RAIN ALERT + CLOUD
            ============================================================ */
 
         function populateAlertAndCloud(
@@ -2674,6 +2655,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
             for (
+
                 let i = startIdx;
 
                 i <
@@ -2683,6 +2665,7 @@ if (window.__weatherguardScriptLoaded) {
                 );
 
                 i++
+
             ) {
 
                 if (
@@ -2700,9 +2683,7 @@ if (window.__weatherguardScriptLoaded) {
             }
 
 
-            if (
-                rainIdx === -1
-            ) {
+            if (rainIdx === -1) {
 
                 setText(
                     "rainEta",
@@ -2760,15 +2741,13 @@ if (window.__weatherguardScriptLoaded) {
                 ];
 
 
-            const etaText =
-                hoursAhead === 0
-                    ? "🌧️ Rain now"
-                    : `🌧️ Rain in ~${hoursAhead}h`;
-
-
             setText(
                 "rainEta",
-                etaText
+
+                hoursAhead === 0
+                    ? "🌧️ Rain now"
+                    : `🌧️ Rain in ~${hoursAhead}h`
+
             );
 
 
@@ -2789,6 +2768,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
                 box.dataset.tone =
+
                     prob >= 70
                         ? "high"
                         : "moderate";
@@ -2825,7 +2805,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           MOON PHASE
+           ASTRONOMY
            ============================================================ */
 
         function getMoonPhase(
@@ -2857,7 +2837,8 @@ if (window.__weatherguardScriptLoaded) {
                 (
                     (days % synodic) +
                     synodic
-                ) % synodic;
+                ) %
+                synodic;
 
 
             const illumination =
@@ -3006,7 +2987,9 @@ if (window.__weatherguardScriptLoaded) {
                 setText(
                     "sunriseVal",
                     formatHour(
-                        new Date(sunrise)
+                        new Date(
+                            sunrise
+                        )
                     )
                 );
 
@@ -3018,7 +3001,9 @@ if (window.__weatherguardScriptLoaded) {
                 setText(
                     "sunsetVal",
                     formatHour(
-                        new Date(sunset)
+                        new Date(
+                            sunset
+                        )
                     )
                 );
 
@@ -3085,14 +3070,16 @@ if (window.__weatherguardScriptLoaded) {
 
             setText(
                 "moonRiseSet",
+
                 "Moonrise/moonset times aren't available from the current data source."
+
             );
 
         }
 
 
         /* ============================================================
-           GEOCODING FOR HISTORY
+           HISTORICAL WEATHER
            ============================================================ */
 
         async function geocodeCity(
@@ -3136,39 +3123,37 @@ if (window.__weatherguardScriptLoaded) {
             }
 
 
-            const r =
+            const result =
                 data.results[0];
 
 
             return {
 
                 lat:
-                    r.latitude,
+                    result.latitude,
 
                 lon:
-                    r.longitude,
+                    result.longitude,
 
                 label:
-                    `${r.name}, ${r.country || ""}`.trim()
+                    `${result.name}, ${
+                        result.country || ""
+                    }`.trim()
 
             };
 
         }
 
 
-        /* ============================================================
-           HISTORICAL WEATHER
-           ============================================================ */
-
         async function fetchHistory() {
 
-            const dateElement =
+            const dateInput =
                 document.getElementById(
                     "histDate"
                 );
 
 
-            const cityElement =
+            const cityInputElement =
                 document.getElementById(
                     "histCity"
                 );
@@ -3181,8 +3166,8 @@ if (window.__weatherguardScriptLoaded) {
 
 
             if (
-                !dateElement ||
-                !cityElement ||
+                !dateInput ||
+                !cityInputElement ||
                 !output
             ) {
 
@@ -3192,11 +3177,11 @@ if (window.__weatherguardScriptLoaded) {
 
 
             const dateVal =
-                dateElement.value;
+                dateInput.value;
 
 
             const cityInput =
-                cityElement.value.trim();
+                cityInputElement.value.trim();
 
 
             if (!dateVal) {
@@ -3241,9 +3226,7 @@ if (window.__weatherguardScriptLoaded) {
                     label =
                         geo.label;
 
-                }
-
-                else if (
+                } else if (
                     lastKnownCoords
                 ) {
 
@@ -3254,9 +3237,7 @@ if (window.__weatherguardScriptLoaded) {
                     label =
                         "your current location";
 
-                }
-
-                else {
+                } else {
 
                     throw new Error(
 
@@ -3384,7 +3365,9 @@ if (window.__weatherguardScriptLoaded) {
                         class="section-label reveal-up"
                         style="--i:0"
                     >
+
                         Results for ${formatted} · ${label}
+
                     </div>
 
 
@@ -3504,7 +3487,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
         /* ============================================================
-           LOCATION + STARTUP
+           GEOLOCATION
            ============================================================ */
 
         function getLocationAndWeather() {
@@ -3547,9 +3530,7 @@ if (window.__weatherguardScriptLoaded) {
 
 
                     console.log(
-
                         `Location acquired: lat=${latitude}, lon=${longitude}`
-
                     );
 
 
@@ -3564,29 +3545,17 @@ if (window.__weatherguardScriptLoaded) {
                     };
 
 
-                    /*
-                       Current weather
-                    */
-
                     getCurrentWeather(
                         latitude,
                         longitude
                     );
 
 
-                    /*
-                       Forecast
-                    */
-
                     getForecastData(
                         latitude,
                         longitude
                     );
 
-
-                    /*
-                       AI prediction for current location
-                    */
 
                     const placeName =
                         await reverseGeocode(
