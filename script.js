@@ -1324,6 +1324,17 @@ if (window.__weatherguardScriptLoaded) {
                 .join("");
     }
 
+    /* ============================================================
+       RAIN ALERT BANNER (ALWAYS VISIBLE)
+       ============================================================
+       Previously this only set box.style.display = "flex" when
+       the rain probability was >= 70%, and "none" otherwise —
+       so the banner disappeared entirely whenever there was no
+       meaningful rain risk. It now always shows, with a tone
+       (low / moderate / high) that controls its color via CSS
+       (see the .alert[data-tone="..."] rules in index.html).
+       ============================================================ */
+
     function populateAlertAndCloud(data) {
 
         if (!data.hourly) {
@@ -1351,6 +1362,11 @@ if (window.__weatherguardScriptLoaded) {
                 : undefined
         );
 
+        const box =
+            document.getElementById(
+                "alertBox"
+            );
+
         let rainIdx = -1;
 
         for (
@@ -1372,17 +1388,8 @@ if (window.__weatherguardScriptLoaded) {
             }
         }
 
-        const box =
-            document.getElementById(
-                "alertBox"
-            );
-
+        /* ---- No meaningful rain risk in the next 12h ---- */
         if (rainIdx === -1) {
-
-            if (box) {
-                box.style.display =
-                    "none";
-            }
 
             setText(
                 "rainEta",
@@ -1394,8 +1401,30 @@ if (window.__weatherguardScriptLoaded) {
                 "No significant rain expected in the next 12 hours."
             );
 
+            if (box) {
+                box.style.display = "flex";
+                box.dataset.tone = "low";
+
+                setText(
+                    "alertTitle",
+                    "No rain risk right now"
+                );
+
+                setText(
+                    "alertBody",
+                    "Conditions look clear for the next 12 hours."
+                );
+
+                setText(
+                    "riskTag",
+                    "LOW RISK"
+                );
+            }
+
             return;
         }
+
+        /* ---- Rain expected somewhere in the next 12h ---- */
 
         const hoursAhead =
             rainIdx - startIdx;
@@ -1424,10 +1453,14 @@ if (window.__weatherguardScriptLoaded) {
 
         if (box) {
 
-            box.style.display =
+            box.style.display = "flex";
+
+            const tone =
                 prob >= 70
-                    ? "flex"
-                    : "none";
+                    ? "high"
+                    : "moderate";
+
+            box.dataset.tone = tone;
 
             setText(
                 "alertTitle",
