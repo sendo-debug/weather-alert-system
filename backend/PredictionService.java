@@ -12,7 +12,7 @@ public class PredictionService {
     private static final String PREDICTION_API_URL =
             System.getenv().getOrDefault(
                     "PREDICTION_API_URL",
-                    "http://localhost:8000/predict"
+                    "https://weather-alert-system-local.onrender.com/predict"
             );
 
     /**
